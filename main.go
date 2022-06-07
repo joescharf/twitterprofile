@@ -1,4 +1,5 @@
 // https://blog.radwell.codes/2022/01/go-program-for-a-unique-twitter-profile-banner/
+// https://pkg.go.dev/github.com/dghubble/oauth1
 
 package main
 
@@ -11,12 +12,12 @@ import (
 
 	"golang.org/x/oauth2"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
+	"github.com/joescharf/twitterprofile/v2/ent"
 	"github.com/joho/godotenv"
 
-	"github.com/michimani/gotwi"
+	_ "github.com/lib/pq"
 )
 
 type TP struct {
@@ -32,7 +33,6 @@ type App struct {
 	Server           *http.Server
 	Oauth2Config     *oauth2.Config
 	Oauth1Config     *oauth1.Config
-	OA1RequestToken  string
 	OA1RequestSecret string
 	CodeVerifier     string
 	Token            *oauth2.Token
@@ -42,21 +42,14 @@ type App struct {
 var app *App
 
 func main() {
+	ctx := context.Background()
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
 	// **** INITIALIZE
-	ctx := context.Background()
-	app = &App{
-		Tp:           &TP{},
-		Server:       &http.Server{},
-		Oauth2Config: &oauth2.Config{},
-		Oauth1Config: &oauth1.Config{},
-		Token:        &oauth2.Token{},
-	}
-
+	app = &App{}
 	app.Tp = &TP{
 		APIKey:       os.Getenv("TP_API_KEY"),
 		APISecret:    os.Getenv("TP_API_KEY_SECRET"),
@@ -65,64 +58,35 @@ func main() {
 		ClientID:     os.Getenv("TP_CLIENT_ID"),
 	}
 
+	// DB
+	dbConnStr := "postgres://postgres:postgres@localhost:15432/twitterprofile?sslmode=disable"
+	dbClient, err := ent.Open("postgres", dbConnStr)
+	if err != nil {
+		log.Fatalf("failed opening connection to postgres: %v", err)
+	}
+	defer dbClient.Close()
+	// Run the auto migration tool.
+	if err := dbClient.Schema.Create(context.Background()); err != nil {
+		log.Fatalf("failed creating schema resources: %v", err)
+	}
+
 	// AUTHENTICATE TWITTER
-	app.AuthTwitter2(ctx)
-
-	spew.Dump("TOKEN:", app.Token)
-
-	// DO SHIT
-
-	// Init the gotwi client (APIv2)
-	in := &gotwi.NewClientWithAccessTokenInput{
-		AccessToken: app.Token.AccessToken,
-	}
-
-	c, err := gotwi.NewClientWithAccessToken(in)
-	if err != nil {
-		os.Exit(1)
-	}
-
-	// Get profile with goTWI:
-
-	u, err := GetProfile(ctx, c, "joescharf")
-	if err != nil {
-		os.Exit(1)
-	}
-
-	fmt.Println("ID:          ", gotwi.StringValue(u.Data.ID))
-	fmt.Println("Name:        ", gotwi.StringValue(u.Data.Name))
-	fmt.Println("Username:    ", gotwi.StringValue(u.Data.Username))
-	fmt.Println("CreatedAt:   ", u.Data.CreatedAt)
-	fmt.Println("Description: ", gotwi.StringValue(u.Data.Description))
-	if u.Includes.Tweets != nil {
-		for _, t := range u.Includes.Tweets {
-			fmt.Println("PinnedTweet: ", gotwi.StringValue(t.Text))
-		}
-	}
-
-	// Init go-twitter (APIv1.1)
-	httpClient := getTwitterOauth1Client(app.Tp.APIKey, app.Tp.APISecret, app.Tp.AccessToken, app.Tp.AccessSecret)
-	// Twitter client
-	goTwitterClient := twitter.NewClient(httpClient)
-
-	// User Show
-	user, _, err := goTwitterClient.Users.Show(&twitter.UserShowParams{
-		ScreenName: "joescharf",
-	})
-
-	fmt.Println("User Oauth 1.1 Desc:", user.Description)
-
-	// **** 3 legged oauth1:
 	err = app.AuthTwitter1()
 	if err != nil {
 		fmt.Println("AuthTwitter1 Error: ", err)
+		os.Exit(1)
 	}
+	// Setup twitter client
+	httpClient := app.Oauth1Config.Client(ctx, app.Token1)
+	client := twitter.NewClient(httpClient)
 
-}
+	// Get the profile:
+	user, _, err := client.Users.Show(&twitter.UserShowParams{
+		ScreenName: "joescharf",
+	})
+	fmt.Println("User Profile Description:\n", user.Description)
 
-// cleanup closes the HTTP server
-func cleanup(server *http.Server) {
-	// we run this as a goroutine so that this function falls through and
-	// the socket to the browser gets flushed/closed before the server goes away
-	go server.Close()
+	// Update the profile
+	newDesc := user.Description + "\nHello World."
+	app.UpdateProfileDesc(httpClient, newDesc)
 }

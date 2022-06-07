@@ -18,6 +18,13 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// cleanup closes the HTTP server
+func cleanup(server *http.Server) {
+	// we run this as a goroutine so that this function falls through and
+	// the socket to the browser gets flushed/closed before the server goes away
+	go server.Close()
+}
+
 func (a *App) AuthTwitter2(ctx context.Context) error {
 
 	// **** OAUTH2 PKCE
@@ -98,31 +105,23 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func getTwitterOauth1Client(consumerKey string, consumerSecret string, accessToken string, accessSecret string) *http.Client {
-	config := oauth1.NewConfig(consumerKey, consumerSecret)
-	token := oauth1.NewToken(accessToken, accessSecret)
-
-	return config.Client(oauth1.NoContext, token)
-}
-
 func (a *App) AuthTwitter1() error {
 	a.Oauth1Config = &oauth1.Config{
 		ConsumerKey:    a.Tp.APIKey,
 		ConsumerSecret: a.Tp.APISecret,
-		CallbackURL:    "http://localhost:3000/auth/callback/1",
+		CallbackURL:    "http://localhost:3000/auth/callback",
 		Endpoint:       twitter.AuthorizeEndpoint,
 	}
 	requestToken, requestSecret, err := a.Oauth1Config.RequestToken()
 	if err != nil {
 		return err
 	}
-	a.OA1RequestToken = requestToken
 	a.OA1RequestSecret = requestSecret
 	authURL, err := a.Oauth1Config.AuthorizationURL(requestToken)
 
 	// start a web server to listen on a callback URL
-	app.Server = &http.Server{Addr: "http://localhost:3000/auth/callback"}
-	http.HandleFunc("/1", HandleOAuth1Callback)
+	app.Server = &http.Server{Addr: a.Oauth1Config.CallbackURL}
+	http.HandleFunc("/", HandleOAuth1Callback)
 
 	// parse the redirect URL for the port number
 	u, err := url.Parse(app.Oauth1Config.CallbackURL)
@@ -154,13 +153,18 @@ func HandleOAuth1Callback(w http.ResponseWriter, r *http.Request) {
 	// Get the authorization code from query parameters
 	requestToken, verifier, err := oauth1.ParseAuthorizationCallback(r)
 	if err != nil {
+		fmt.Println("HandleOauth1Callback: ParseAuthorizationCallback Error")
 		return
 	}
 	accessToken, accessSecret, err := app.Oauth1Config.AccessToken(requestToken, app.OA1RequestSecret, verifier)
-	// handle error
+	if err != nil {
+		fmt.Println("HandleOauth1Callback: AccessToken Error")
+		return
+	}
+
 	token := oauth1.NewToken(accessToken, accessSecret)
 	app.Token1 = token
-	spew.Dump("OA1TOKEN:", token)
+	spew.Dump("TOKEN:", token)
 
 	// close the HTTP server
 	cleanup(app.Server)
