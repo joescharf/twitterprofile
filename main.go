@@ -9,11 +9,15 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"golang.org/x/oauth2"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joescharf/twitterprofile/v2/ent"
 	"github.com/joho/godotenv"
 
@@ -37,12 +41,14 @@ type App struct {
 	CodeVerifier     string
 	Token            *oauth2.Token
 	Token1           *oauth1.Token
+	HttpClient1      *http.Client
+	TwitterClient    *twitter.Client
+	UserDescription  string
 }
 
 var app *App
 
 func main() {
-	ctx := context.Background()
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -71,22 +77,55 @@ func main() {
 	}
 
 	// AUTHENTICATE TWITTER
-	err = app.AuthTwitter1()
-	if err != nil {
-		fmt.Println("AuthTwitter1 Error: ", err)
-		os.Exit(1)
-	}
-	// Setup twitter client
-	httpClient := app.Oauth1Config.Client(ctx, app.Token1)
-	client := twitter.NewClient(httpClient)
+	// err = app.AuthTwitter1()
+	// if err != nil {
+	// 	fmt.Println("AuthTwitter1 Error: ", err)
+	// 	os.Exit(1)
+	// }
+	// // Setup twitter client
+	// httpClient := app.Oauth1Config.Client(ctx, app.Token1)
+	// app.TwitterClient = twitter.NewClient(httpClient)
 
-	// Get the profile:
-	user, _, err := client.Users.Show(&twitter.UserShowParams{
-		ScreenName: "joescharf",
+	// // Get the profile:
+	// user, _, err := app.TwitterClient.Users.Show(&twitter.UserShowParams{
+	// 	ScreenName: "joescharf",
+	// })
+	// fmt.Println("User Profile Description:\n", user.Description)
+
+	// // Update the profile
+	// newDesc := user.Description + "\nHello World."
+	// app.UpdateProfileDesc(httpClient, newDesc)
+
+	// WEBSERVER
+
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+
+	// Static locations:
+	workDir, _ := os.Getwd()
+	cssDir := http.Dir(filepath.Join(workDir, "dist/css"))
+	FileServer(r, "/css", cssDir)
+
+	// Routes
+	r.Get("/", indexHandler)
+	r.Get("/login", loginHandler)
+	r.Get("/profile", getProfileHandler)
+	r.Post("/profile", updateProfileHandler)
+	r.Get("/auth/callback", HandleOAuth1Callback)
+
+	r.Get("/hc", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("OK"))
 	})
-	fmt.Println("User Profile Description:\n", user.Description)
 
-	// Update the profile
-	newDesc := user.Description + "\nHello World."
-	app.UpdateProfileDesc(httpClient, newDesc)
+	// START SERVERS and GOROUTINES
+	g := errgroup.Group{}
+	g.Go(func() error {
+		return http.ListenAndServe(":3000", r)
+	})
+
+	// Final wait group
+	if err := g.Wait(); err != nil {
+		fmt.Println(err)
+	}
 }

@@ -99,17 +99,17 @@ func Handle(v string) predicate.User {
 	})
 }
 
-// AccessToken applies equality check predicate on the "access_token" field. It's identical to AccessTokenEQ.
-func AccessToken(v string) predicate.User {
+// Token applies equality check predicate on the "token" field. It's identical to TokenEQ.
+func Token(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAccessToken), v))
+		s.Where(sql.EQ(s.C(FieldToken), v))
 	})
 }
 
-// RefreshToken applies equality check predicate on the "refresh_token" field. It's identical to RefreshTokenEQ.
-func RefreshToken(v string) predicate.User {
+// TokenSecret applies equality check predicate on the "token_secret" field. It's identical to TokenSecretEQ.
+func TokenSecret(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldRefreshToken), v))
+		s.Where(sql.EQ(s.C(FieldTokenSecret), v))
 	})
 }
 
@@ -231,22 +231,22 @@ func HandleContainsFold(v string) predicate.User {
 	})
 }
 
-// AccessTokenEQ applies the EQ predicate on the "access_token" field.
-func AccessTokenEQ(v string) predicate.User {
+// TokenEQ applies the EQ predicate on the "token" field.
+func TokenEQ(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAccessToken), v))
+		s.Where(sql.EQ(s.C(FieldToken), v))
 	})
 }
 
-// AccessTokenNEQ applies the NEQ predicate on the "access_token" field.
-func AccessTokenNEQ(v string) predicate.User {
+// TokenNEQ applies the NEQ predicate on the "token" field.
+func TokenNEQ(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAccessToken), v))
+		s.Where(sql.NEQ(s.C(FieldToken), v))
 	})
 }
 
-// AccessTokenIn applies the In predicate on the "access_token" field.
-func AccessTokenIn(vs ...string) predicate.User {
+// TokenIn applies the In predicate on the "token" field.
+func TokenIn(vs ...string) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -258,12 +258,12 @@ func AccessTokenIn(vs ...string) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldAccessToken), v...))
+		s.Where(sql.In(s.C(FieldToken), v...))
 	})
 }
 
-// AccessTokenNotIn applies the NotIn predicate on the "access_token" field.
-func AccessTokenNotIn(vs ...string) predicate.User {
+// TokenNotIn applies the NotIn predicate on the "token" field.
+func TokenNotIn(vs ...string) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -275,89 +275,89 @@ func AccessTokenNotIn(vs ...string) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldAccessToken), v...))
+		s.Where(sql.NotIn(s.C(FieldToken), v...))
 	})
 }
 
-// AccessTokenGT applies the GT predicate on the "access_token" field.
-func AccessTokenGT(v string) predicate.User {
+// TokenGT applies the GT predicate on the "token" field.
+func TokenGT(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldAccessToken), v))
+		s.Where(sql.GT(s.C(FieldToken), v))
 	})
 }
 
-// AccessTokenGTE applies the GTE predicate on the "access_token" field.
-func AccessTokenGTE(v string) predicate.User {
+// TokenGTE applies the GTE predicate on the "token" field.
+func TokenGTE(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldAccessToken), v))
+		s.Where(sql.GTE(s.C(FieldToken), v))
 	})
 }
 
-// AccessTokenLT applies the LT predicate on the "access_token" field.
-func AccessTokenLT(v string) predicate.User {
+// TokenLT applies the LT predicate on the "token" field.
+func TokenLT(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldAccessToken), v))
+		s.Where(sql.LT(s.C(FieldToken), v))
 	})
 }
 
-// AccessTokenLTE applies the LTE predicate on the "access_token" field.
-func AccessTokenLTE(v string) predicate.User {
+// TokenLTE applies the LTE predicate on the "token" field.
+func TokenLTE(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldAccessToken), v))
+		s.Where(sql.LTE(s.C(FieldToken), v))
 	})
 }
 
-// AccessTokenContains applies the Contains predicate on the "access_token" field.
-func AccessTokenContains(v string) predicate.User {
+// TokenContains applies the Contains predicate on the "token" field.
+func TokenContains(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldAccessToken), v))
+		s.Where(sql.Contains(s.C(FieldToken), v))
 	})
 }
 
-// AccessTokenHasPrefix applies the HasPrefix predicate on the "access_token" field.
-func AccessTokenHasPrefix(v string) predicate.User {
+// TokenHasPrefix applies the HasPrefix predicate on the "token" field.
+func TokenHasPrefix(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldAccessToken), v))
+		s.Where(sql.HasPrefix(s.C(FieldToken), v))
 	})
 }
 
-// AccessTokenHasSuffix applies the HasSuffix predicate on the "access_token" field.
-func AccessTokenHasSuffix(v string) predicate.User {
+// TokenHasSuffix applies the HasSuffix predicate on the "token" field.
+func TokenHasSuffix(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldAccessToken), v))
+		s.Where(sql.HasSuffix(s.C(FieldToken), v))
 	})
 }
 
-// AccessTokenEqualFold applies the EqualFold predicate on the "access_token" field.
-func AccessTokenEqualFold(v string) predicate.User {
+// TokenEqualFold applies the EqualFold predicate on the "token" field.
+func TokenEqualFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldAccessToken), v))
+		s.Where(sql.EqualFold(s.C(FieldToken), v))
 	})
 }
 
-// AccessTokenContainsFold applies the ContainsFold predicate on the "access_token" field.
-func AccessTokenContainsFold(v string) predicate.User {
+// TokenContainsFold applies the ContainsFold predicate on the "token" field.
+func TokenContainsFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldAccessToken), v))
+		s.Where(sql.ContainsFold(s.C(FieldToken), v))
 	})
 }
 
-// RefreshTokenEQ applies the EQ predicate on the "refresh_token" field.
-func RefreshTokenEQ(v string) predicate.User {
+// TokenSecretEQ applies the EQ predicate on the "token_secret" field.
+func TokenSecretEQ(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldRefreshToken), v))
+		s.Where(sql.EQ(s.C(FieldTokenSecret), v))
 	})
 }
 
-// RefreshTokenNEQ applies the NEQ predicate on the "refresh_token" field.
-func RefreshTokenNEQ(v string) predicate.User {
+// TokenSecretNEQ applies the NEQ predicate on the "token_secret" field.
+func TokenSecretNEQ(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldRefreshToken), v))
+		s.Where(sql.NEQ(s.C(FieldTokenSecret), v))
 	})
 }
 
-// RefreshTokenIn applies the In predicate on the "refresh_token" field.
-func RefreshTokenIn(vs ...string) predicate.User {
+// TokenSecretIn applies the In predicate on the "token_secret" field.
+func TokenSecretIn(vs ...string) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -369,12 +369,12 @@ func RefreshTokenIn(vs ...string) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldRefreshToken), v...))
+		s.Where(sql.In(s.C(FieldTokenSecret), v...))
 	})
 }
 
-// RefreshTokenNotIn applies the NotIn predicate on the "refresh_token" field.
-func RefreshTokenNotIn(vs ...string) predicate.User {
+// TokenSecretNotIn applies the NotIn predicate on the "token_secret" field.
+func TokenSecretNotIn(vs ...string) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -386,70 +386,70 @@ func RefreshTokenNotIn(vs ...string) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldRefreshToken), v...))
+		s.Where(sql.NotIn(s.C(FieldTokenSecret), v...))
 	})
 }
 
-// RefreshTokenGT applies the GT predicate on the "refresh_token" field.
-func RefreshTokenGT(v string) predicate.User {
+// TokenSecretGT applies the GT predicate on the "token_secret" field.
+func TokenSecretGT(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldRefreshToken), v))
+		s.Where(sql.GT(s.C(FieldTokenSecret), v))
 	})
 }
 
-// RefreshTokenGTE applies the GTE predicate on the "refresh_token" field.
-func RefreshTokenGTE(v string) predicate.User {
+// TokenSecretGTE applies the GTE predicate on the "token_secret" field.
+func TokenSecretGTE(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldRefreshToken), v))
+		s.Where(sql.GTE(s.C(FieldTokenSecret), v))
 	})
 }
 
-// RefreshTokenLT applies the LT predicate on the "refresh_token" field.
-func RefreshTokenLT(v string) predicate.User {
+// TokenSecretLT applies the LT predicate on the "token_secret" field.
+func TokenSecretLT(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldRefreshToken), v))
+		s.Where(sql.LT(s.C(FieldTokenSecret), v))
 	})
 }
 
-// RefreshTokenLTE applies the LTE predicate on the "refresh_token" field.
-func RefreshTokenLTE(v string) predicate.User {
+// TokenSecretLTE applies the LTE predicate on the "token_secret" field.
+func TokenSecretLTE(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldRefreshToken), v))
+		s.Where(sql.LTE(s.C(FieldTokenSecret), v))
 	})
 }
 
-// RefreshTokenContains applies the Contains predicate on the "refresh_token" field.
-func RefreshTokenContains(v string) predicate.User {
+// TokenSecretContains applies the Contains predicate on the "token_secret" field.
+func TokenSecretContains(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldRefreshToken), v))
+		s.Where(sql.Contains(s.C(FieldTokenSecret), v))
 	})
 }
 
-// RefreshTokenHasPrefix applies the HasPrefix predicate on the "refresh_token" field.
-func RefreshTokenHasPrefix(v string) predicate.User {
+// TokenSecretHasPrefix applies the HasPrefix predicate on the "token_secret" field.
+func TokenSecretHasPrefix(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldRefreshToken), v))
+		s.Where(sql.HasPrefix(s.C(FieldTokenSecret), v))
 	})
 }
 
-// RefreshTokenHasSuffix applies the HasSuffix predicate on the "refresh_token" field.
-func RefreshTokenHasSuffix(v string) predicate.User {
+// TokenSecretHasSuffix applies the HasSuffix predicate on the "token_secret" field.
+func TokenSecretHasSuffix(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldRefreshToken), v))
+		s.Where(sql.HasSuffix(s.C(FieldTokenSecret), v))
 	})
 }
 
-// RefreshTokenEqualFold applies the EqualFold predicate on the "refresh_token" field.
-func RefreshTokenEqualFold(v string) predicate.User {
+// TokenSecretEqualFold applies the EqualFold predicate on the "token_secret" field.
+func TokenSecretEqualFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldRefreshToken), v))
+		s.Where(sql.EqualFold(s.C(FieldTokenSecret), v))
 	})
 }
 
-// RefreshTokenContainsFold applies the ContainsFold predicate on the "refresh_token" field.
-func RefreshTokenContainsFold(v string) predicate.User {
+// TokenSecretContainsFold applies the ContainsFold predicate on the "token_secret" field.
+func TokenSecretContainsFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldRefreshToken), v))
+		s.Where(sql.ContainsFold(s.C(FieldTokenSecret), v))
 	})
 }
 

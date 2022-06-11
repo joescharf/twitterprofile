@@ -18,10 +18,10 @@ type User struct {
 	ID int `json:"id,omitempty"`
 	// Handle holds the value of the "handle" field.
 	Handle string `json:"handle,omitempty"`
-	// AccessToken holds the value of the "access_token" field.
-	AccessToken string `json:"access_token,omitempty"`
-	// RefreshToken holds the value of the "refresh_token" field.
-	RefreshToken string `json:"refresh_token,omitempty"`
+	// Token holds the value of the "token" field.
+	Token string `json:"token,omitempty"`
+	// TokenSecret holds the value of the "token_secret" field.
+	TokenSecret string `json:"token_secret,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }
@@ -33,7 +33,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldHandle, user.FieldAccessToken, user.FieldRefreshToken:
+		case user.FieldHandle, user.FieldToken, user.FieldTokenSecret:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -64,17 +64,17 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				u.Handle = value.String
 			}
-		case user.FieldAccessToken:
+		case user.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field access_token", values[i])
+				return fmt.Errorf("unexpected type %T for field token", values[i])
 			} else if value.Valid {
-				u.AccessToken = value.String
+				u.Token = value.String
 			}
-		case user.FieldRefreshToken:
+		case user.FieldTokenSecret:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field refresh_token", values[i])
+				return fmt.Errorf("unexpected type %T for field token_secret", values[i])
 			} else if value.Valid {
-				u.RefreshToken = value.String
+				u.TokenSecret = value.String
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -112,10 +112,10 @@ func (u *User) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
 	builder.WriteString(", handle=")
 	builder.WriteString(u.Handle)
-	builder.WriteString(", access_token=")
-	builder.WriteString(u.AccessToken)
-	builder.WriteString(", refresh_token=")
-	builder.WriteString(u.RefreshToken)
+	builder.WriteString(", token=")
+	builder.WriteString(u.Token)
+	builder.WriteString(", token_secret=")
+	builder.WriteString(u.TokenSecret)
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')

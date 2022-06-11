@@ -26,15 +26,15 @@ func (uc *UserCreate) SetHandle(s string) *UserCreate {
 	return uc
 }
 
-// SetAccessToken sets the "access_token" field.
-func (uc *UserCreate) SetAccessToken(s string) *UserCreate {
-	uc.mutation.SetAccessToken(s)
+// SetToken sets the "token" field.
+func (uc *UserCreate) SetToken(s string) *UserCreate {
+	uc.mutation.SetToken(s)
 	return uc
 }
 
-// SetRefreshToken sets the "refresh_token" field.
-func (uc *UserCreate) SetRefreshToken(s string) *UserCreate {
-	uc.mutation.SetRefreshToken(s)
+// SetTokenSecret sets the "token_secret" field.
+func (uc *UserCreate) SetTokenSecret(s string) *UserCreate {
+	uc.mutation.SetTokenSecret(s)
 	return uc
 }
 
@@ -134,11 +134,11 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Handle(); !ok {
 		return &ValidationError{Name: "handle", err: errors.New(`ent: missing required field "User.handle"`)}
 	}
-	if _, ok := uc.mutation.AccessToken(); !ok {
-		return &ValidationError{Name: "access_token", err: errors.New(`ent: missing required field "User.access_token"`)}
+	if _, ok := uc.mutation.Token(); !ok {
+		return &ValidationError{Name: "token", err: errors.New(`ent: missing required field "User.token"`)}
 	}
-	if _, ok := uc.mutation.RefreshToken(); !ok {
-		return &ValidationError{Name: "refresh_token", err: errors.New(`ent: missing required field "User.refresh_token"`)}
+	if _, ok := uc.mutation.TokenSecret(); !ok {
+		return &ValidationError{Name: "token_secret", err: errors.New(`ent: missing required field "User.token_secret"`)}
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
@@ -178,21 +178,21 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		})
 		_node.Handle = value
 	}
-	if value, ok := uc.mutation.AccessToken(); ok {
+	if value, ok := uc.mutation.Token(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldAccessToken,
+			Column: user.FieldToken,
 		})
-		_node.AccessToken = value
+		_node.Token = value
 	}
-	if value, ok := uc.mutation.RefreshToken(); ok {
+	if value, ok := uc.mutation.TokenSecret(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldRefreshToken,
+			Column: user.FieldTokenSecret,
 		})
-		_node.RefreshToken = value
+		_node.TokenSecret = value
 	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

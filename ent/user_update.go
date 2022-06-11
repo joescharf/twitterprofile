@@ -34,15 +34,15 @@ func (uu *UserUpdate) SetHandle(s string) *UserUpdate {
 	return uu
 }
 
-// SetAccessToken sets the "access_token" field.
-func (uu *UserUpdate) SetAccessToken(s string) *UserUpdate {
-	uu.mutation.SetAccessToken(s)
+// SetToken sets the "token" field.
+func (uu *UserUpdate) SetToken(s string) *UserUpdate {
+	uu.mutation.SetToken(s)
 	return uu
 }
 
-// SetRefreshToken sets the "refresh_token" field.
-func (uu *UserUpdate) SetRefreshToken(s string) *UserUpdate {
-	uu.mutation.SetRefreshToken(s)
+// SetTokenSecret sets the "token_secret" field.
+func (uu *UserUpdate) SetTokenSecret(s string) *UserUpdate {
+	uu.mutation.SetTokenSecret(s)
 	return uu
 }
 
@@ -144,18 +144,18 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldHandle,
 		})
 	}
-	if value, ok := uu.mutation.AccessToken(); ok {
+	if value, ok := uu.mutation.Token(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldAccessToken,
+			Column: user.FieldToken,
 		})
 	}
-	if value, ok := uu.mutation.RefreshToken(); ok {
+	if value, ok := uu.mutation.TokenSecret(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldRefreshToken,
+			Column: user.FieldTokenSecret,
 		})
 	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
@@ -190,15 +190,15 @@ func (uuo *UserUpdateOne) SetHandle(s string) *UserUpdateOne {
 	return uuo
 }
 
-// SetAccessToken sets the "access_token" field.
-func (uuo *UserUpdateOne) SetAccessToken(s string) *UserUpdateOne {
-	uuo.mutation.SetAccessToken(s)
+// SetToken sets the "token" field.
+func (uuo *UserUpdateOne) SetToken(s string) *UserUpdateOne {
+	uuo.mutation.SetToken(s)
 	return uuo
 }
 
-// SetRefreshToken sets the "refresh_token" field.
-func (uuo *UserUpdateOne) SetRefreshToken(s string) *UserUpdateOne {
-	uuo.mutation.SetRefreshToken(s)
+// SetTokenSecret sets the "token_secret" field.
+func (uuo *UserUpdateOne) SetTokenSecret(s string) *UserUpdateOne {
+	uuo.mutation.SetTokenSecret(s)
 	return uuo
 }
 
@@ -324,18 +324,18 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Column: user.FieldHandle,
 		})
 	}
-	if value, ok := uuo.mutation.AccessToken(); ok {
+	if value, ok := uuo.mutation.Token(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldAccessToken,
+			Column: user.FieldToken,
 		})
 	}
-	if value, ok := uuo.mutation.RefreshToken(); ok {
+	if value, ok := uuo.mutation.TokenSecret(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldRefreshToken,
+			Column: user.FieldTokenSecret,
 		})
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {

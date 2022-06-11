@@ -10,6 +10,7 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 
+	tclient "github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 	"github.com/dghubble/oauth1/twitter"
 
@@ -46,8 +47,6 @@ func (a *App) AuthTwitter2(ctx context.Context) error {
 		oauth2.AccessTypeOffline,
 		oauth2.SetAuthURLParam(pkce.ParamCodeChallenge, codeChallenge),
 		oauth2.SetAuthURLParam(pkce.ParamCodeChallengeMethod, pkce.MethodS256))
-
-	spew.Dump(authURL)
 
 	// start a web server to listen on a callback URL
 	app.Server = &http.Server{Addr: app.Oauth2Config.RedirectURL}
@@ -119,35 +118,13 @@ func (a *App) AuthTwitter1() error {
 	a.OA1RequestSecret = requestSecret
 	authURL, err := a.Oauth1Config.AuthorizationURL(requestToken)
 
-	// start a web server to listen on a callback URL
-	app.Server = &http.Server{Addr: a.Oauth1Config.CallbackURL}
-	http.HandleFunc("/", HandleOAuth1Callback)
-
-	// parse the redirect URL for the port number
-	u, err := url.Parse(app.Oauth1Config.CallbackURL)
-	if err != nil {
-		return err
-	}
-
-	// set up a listener on the redirect port
-	port := fmt.Sprintf(":%s", u.Port())
-	l, err := net.Listen("tcp", port)
-	if err != nil {
-		return err
-	}
-
 	// open a browser window to the authorizationURL
 	err = open.Start(authURL.String())
 	if err != nil {
 		return err
 	}
 
-	// start the blocking web server loop
-	// this will exit when the handler gets fired and calls server.Close()
-	app.Server.Serve(l)
-
 	return nil
-
 }
 func HandleOAuth1Callback(w http.ResponseWriter, r *http.Request) {
 	// Get the authorization code from query parameters
@@ -166,7 +143,8 @@ func HandleOAuth1Callback(w http.ResponseWriter, r *http.Request) {
 	app.Token1 = token
 	spew.Dump("TOKEN:", token)
 
-	// close the HTTP server
-	cleanup(app.Server)
+	// Setup twitter client
+	app.HttpClient1 = app.Oauth1Config.Client(r.Context(), app.Token1)
+	app.TwitterClient = tclient.NewClient(app.HttpClient1)
 
 }

@@ -16,8 +16,8 @@ type User struct {
 func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("handle").Unique(),
-		field.String("access_token"),
-		field.String("refresh_token"),
+		field.String("token"),
+		field.String("token_secret"),
 		field.Time("created_at").
 			Default(time.Now),
 	}

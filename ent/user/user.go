@@ -13,10 +13,10 @@ const (
 	FieldID = "id"
 	// FieldHandle holds the string denoting the handle field in the database.
 	FieldHandle = "handle"
-	// FieldAccessToken holds the string denoting the access_token field in the database.
-	FieldAccessToken = "access_token"
-	// FieldRefreshToken holds the string denoting the refresh_token field in the database.
-	FieldRefreshToken = "refresh_token"
+	// FieldToken holds the string denoting the token field in the database.
+	FieldToken = "token"
+	// FieldTokenSecret holds the string denoting the token_secret field in the database.
+	FieldTokenSecret = "token_secret"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// Table holds the table name of the user in the database.
@@ -27,8 +27,8 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldHandle,
-	FieldAccessToken,
-	FieldRefreshToken,
+	FieldToken,
+	FieldTokenSecret,
 	FieldCreatedAt,
 }
 

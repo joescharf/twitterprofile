@@ -34,8 +34,8 @@ type UserMutation struct {
 	typ           string
 	id            *int
 	handle        *string
-	access_token  *string
-	refresh_token *string
+	token         *string
+	token_secret  *string
 	created_at    *time.Time
 	clearedFields map[string]struct{}
 	done          bool
@@ -177,76 +177,76 @@ func (m *UserMutation) ResetHandle() {
 	m.handle = nil
 }
 
-// SetAccessToken sets the "access_token" field.
-func (m *UserMutation) SetAccessToken(s string) {
-	m.access_token = &s
+// SetToken sets the "token" field.
+func (m *UserMutation) SetToken(s string) {
+	m.token = &s
 }
 
-// AccessToken returns the value of the "access_token" field in the mutation.
-func (m *UserMutation) AccessToken() (r string, exists bool) {
-	v := m.access_token
+// Token returns the value of the "token" field in the mutation.
+func (m *UserMutation) Token() (r string, exists bool) {
+	v := m.token
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAccessToken returns the old "access_token" field's value of the User entity.
+// OldToken returns the old "token" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldAccessToken(ctx context.Context) (v string, err error) {
+func (m *UserMutation) OldToken(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAccessToken is only allowed on UpdateOne operations")
+		return v, errors.New("OldToken is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAccessToken requires an ID field in the mutation")
+		return v, errors.New("OldToken requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAccessToken: %w", err)
+		return v, fmt.Errorf("querying old value for OldToken: %w", err)
 	}
-	return oldValue.AccessToken, nil
+	return oldValue.Token, nil
 }
 
-// ResetAccessToken resets all changes to the "access_token" field.
-func (m *UserMutation) ResetAccessToken() {
-	m.access_token = nil
+// ResetToken resets all changes to the "token" field.
+func (m *UserMutation) ResetToken() {
+	m.token = nil
 }
 
-// SetRefreshToken sets the "refresh_token" field.
-func (m *UserMutation) SetRefreshToken(s string) {
-	m.refresh_token = &s
+// SetTokenSecret sets the "token_secret" field.
+func (m *UserMutation) SetTokenSecret(s string) {
+	m.token_secret = &s
 }
 
-// RefreshToken returns the value of the "refresh_token" field in the mutation.
-func (m *UserMutation) RefreshToken() (r string, exists bool) {
-	v := m.refresh_token
+// TokenSecret returns the value of the "token_secret" field in the mutation.
+func (m *UserMutation) TokenSecret() (r string, exists bool) {
+	v := m.token_secret
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldRefreshToken returns the old "refresh_token" field's value of the User entity.
+// OldTokenSecret returns the old "token_secret" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldRefreshToken(ctx context.Context) (v string, err error) {
+func (m *UserMutation) OldTokenSecret(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRefreshToken is only allowed on UpdateOne operations")
+		return v, errors.New("OldTokenSecret is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRefreshToken requires an ID field in the mutation")
+		return v, errors.New("OldTokenSecret requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRefreshToken: %w", err)
+		return v, fmt.Errorf("querying old value for OldTokenSecret: %w", err)
 	}
-	return oldValue.RefreshToken, nil
+	return oldValue.TokenSecret, nil
 }
 
-// ResetRefreshToken resets all changes to the "refresh_token" field.
-func (m *UserMutation) ResetRefreshToken() {
-	m.refresh_token = nil
+// ResetTokenSecret resets all changes to the "token_secret" field.
+func (m *UserMutation) ResetTokenSecret() {
+	m.token_secret = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -308,11 +308,11 @@ func (m *UserMutation) Fields() []string {
 	if m.handle != nil {
 		fields = append(fields, user.FieldHandle)
 	}
-	if m.access_token != nil {
-		fields = append(fields, user.FieldAccessToken)
+	if m.token != nil {
+		fields = append(fields, user.FieldToken)
 	}
-	if m.refresh_token != nil {
-		fields = append(fields, user.FieldRefreshToken)
+	if m.token_secret != nil {
+		fields = append(fields, user.FieldTokenSecret)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
@@ -327,10 +327,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case user.FieldHandle:
 		return m.Handle()
-	case user.FieldAccessToken:
-		return m.AccessToken()
-	case user.FieldRefreshToken:
-		return m.RefreshToken()
+	case user.FieldToken:
+		return m.Token()
+	case user.FieldTokenSecret:
+		return m.TokenSecret()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -344,10 +344,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case user.FieldHandle:
 		return m.OldHandle(ctx)
-	case user.FieldAccessToken:
-		return m.OldAccessToken(ctx)
-	case user.FieldRefreshToken:
-		return m.OldRefreshToken(ctx)
+	case user.FieldToken:
+		return m.OldToken(ctx)
+	case user.FieldTokenSecret:
+		return m.OldTokenSecret(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -366,19 +366,19 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetHandle(v)
 		return nil
-	case user.FieldAccessToken:
+	case user.FieldToken:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAccessToken(v)
+		m.SetToken(v)
 		return nil
-	case user.FieldRefreshToken:
+	case user.FieldTokenSecret:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetRefreshToken(v)
+		m.SetTokenSecret(v)
 		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -439,11 +439,11 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldHandle:
 		m.ResetHandle()
 		return nil
-	case user.FieldAccessToken:
-		m.ResetAccessToken()
+	case user.FieldToken:
+		m.ResetToken()
 		return nil
-	case user.FieldRefreshToken:
-		m.ResetRefreshToken()
+	case user.FieldTokenSecret:
+		m.ResetTokenSecret()
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()

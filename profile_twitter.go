@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"os"
 
 	"github.com/michimani/gotwi"
 	"github.com/michimani/gotwi/fields"
@@ -33,7 +32,7 @@ func GetProfile(ctx context.Context, client *gotwi.Client, username string) (*ty
 	return u, err
 }
 
-func (a *App) UpdateProfileDesc(httpClient *http.Client, newDesc string) {
+func (a *App) UpdateProfileDesc(httpClient *http.Client, newDesc string) error {
 	apiURL := "https://api.twitter.com/1.1/account/update_profile.json"
 
 	// Encode query params and create url
@@ -45,15 +44,14 @@ func (a *App) UpdateProfileDesc(httpClient *http.Client, newDesc string) {
 	// setup the POST request the post
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
 
 	res, err := httpClient.Do(req)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 	fmt.Println("Response Status:", res.StatusCode)
+	return nil
 }
