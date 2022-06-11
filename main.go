@@ -76,27 +76,7 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	// AUTHENTICATE TWITTER
-	// err = app.AuthTwitter1()
-	// if err != nil {
-	// 	fmt.Println("AuthTwitter1 Error: ", err)
-	// 	os.Exit(1)
-	// }
-	// // Setup twitter client
-	// httpClient := app.Oauth1Config.Client(ctx, app.Token1)
-	// app.TwitterClient = twitter.NewClient(httpClient)
-
-	// // Get the profile:
-	// user, _, err := app.TwitterClient.Users.Show(&twitter.UserShowParams{
-	// 	ScreenName: "joescharf",
-	// })
-	// fmt.Println("User Profile Description:\n", user.Description)
-
-	// // Update the profile
-	// newDesc := user.Description + "\nHello World."
-	// app.UpdateProfileDesc(httpClient, newDesc)
-
-	// WEBSERVER
+	// WEBSERVER and ROUTES
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
