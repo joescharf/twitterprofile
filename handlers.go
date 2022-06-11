@@ -11,7 +11,7 @@ import (
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("templates/index.html")
+	t, _ := template.ParseFiles("templates/layout.html", "templates/nav.html", "templates/index.html")
 	t.Execute(w, nil)
 }
 
