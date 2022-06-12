@@ -2,17 +2,18 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 	"strings"
+
+	"github.com/joescharf/twitterprofile/v2/templates"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/go-chi/chi/v5"
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("templates/layout.html", "templates/nav.html", "templates/index.html")
-	t.Execute(w, nil)
+	p := templates.HomeParams{}
+	templates.Home(w, p)
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,6 +23,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("error logging in: %v", err)))
 	}
 }
+
 func getProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// Get the profile:
 	user, _, err := app.TwitterClient.Users.Show(&twitter.UserShowParams{
@@ -32,7 +34,11 @@ func getProfileHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("error getting profile: %v", err)))
 	}
 	app.UserDescription = user.Description
-	w.Write([]byte(fmt.Sprintf("User Profile Description:\n%s", user.Description)))
+
+	p := templates.ProfileParams{
+		Description: user.Description,
+	}
+	templates.Profile(w, p)
 }
 func updateProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// Update the profile

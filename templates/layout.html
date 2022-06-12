@@ -1,21 +1,21 @@
 <!-- layout.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="/css/main.css" rel="stylesheet">
-</head>
-    <body>
-        <div class="navbar">
-          {{block "nav" .}}
-            <!-- Fallback, if "content" is not defined elsewhere -->
-          {{end}} 
-        </div>
-        <div class="content">
-          {{block "content" .}}
-            <!-- Fallback, if "content" is not defined elsewhere -->
-          {{end}}
-        </div>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/main.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="navbar">
+      {{ block "nav" . }}
+        <!-- Fallback, if "content" is not defined elsewhere -->
+      {{ end }}
+    </div>
+    <div class="content">
+      {{ block "content" . }}
+        <!-- Fallback, if "content" is not defined elsewhere -->
+      {{ end }}
+    </div>
+  </body>
 </html>
