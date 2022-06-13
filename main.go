@@ -109,8 +109,8 @@ func main() {
 
 	// Routes
 	r.Get("/", indexHandler)
-	// r.Get("/login", loginHandler)
-	// r.Get("/auth/callback", HandleOAuth1Callback)
+
+	// https://github.com/dghubble/gologin#twitter-oauth1
 	r.Get("/login", twitterlogin.LoginHandler(app.Oauth1Config, nil).ServeHTTP)
 	r.Get("/auth/callback", twitterlogin.CallbackHandler(app.Oauth1Config, http.HandlerFunc(loginSuccessHandler), nil).ServeHTTP)
 
