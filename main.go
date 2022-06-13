@@ -5,6 +5,7 @@ package main
 
 import (
 	"context"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,9 +16,14 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/dghubble/go-twitter/twitter"
+	twitterlogin "github.com/dghubble/gologin/v2/twitter"
 	"github.com/dghubble/oauth1"
+	twitteroa1 "github.com/dghubble/oauth1/twitter"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/gorilla/sessions"
+
 	"github.com/joescharf/twitterprofile/v2/ent"
 	"github.com/joho/godotenv"
 
@@ -30,23 +36,26 @@ type TP struct {
 	AccessToken  string
 	AccessSecret string
 	ClientID     string
+	SessionKey   string
 }
 
 type App struct {
-	Tp               *TP
-	Server           *http.Server
-	Oauth2Config     *oauth2.Config
-	Oauth1Config     *oauth1.Config
-	OA1RequestSecret string
-	CodeVerifier     string
-	Token            *oauth2.Token
-	Token1           *oauth1.Token
-	HttpClient1      *http.Client
-	TwitterClient    *twitter.Client
-	UserDescription  string
+	Tp              *TP
+	Server          *http.Server
+	Store           *sessions.CookieStore
+	Oauth2Config    *oauth2.Config
+	Oauth1Config    *oauth1.Config
+	CodeVerifier    string
+	Token           *oauth2.Token
+	HttpClient1     *http.Client
+	UserDescription string
 }
 
 var app *App
+
+func init() {
+	gob.Register(&twitter.User{})
+}
 
 func main() {
 	err := godotenv.Load()
@@ -62,7 +71,18 @@ func main() {
 		AccessToken:  os.Getenv("TP_ACCESS_TOKEN"),
 		AccessSecret: os.Getenv("TP_ACCESS_TOKEN_SECRET"),
 		ClientID:     os.Getenv("TP_CLIENT_ID"),
+		SessionKey:   os.Getenv("TP_SESSION_KEY"),
 	}
+	app.Oauth1Config = &oauth1.Config{
+		ConsumerKey:    app.Tp.APIKey,
+		ConsumerSecret: app.Tp.APISecret,
+		CallbackURL:    "http://localhost:3000/auth/callback",
+		Endpoint:       twitteroa1.AuthorizeEndpoint,
+	}
+
+	// Initialize Session Store
+	// fmt.Println(hex.EncodeToString(securecookie.GenerateRandomKey(32)))
+	app.Store = sessions.NewCookieStore([]byte(app.Tp.SessionKey))
 
 	// DB
 	dbConnStr := "postgres://postgres:postgres@localhost:15432/twitterprofile?sslmode=disable"
@@ -89,10 +109,13 @@ func main() {
 
 	// Routes
 	r.Get("/", indexHandler)
-	r.Get("/login", loginHandler)
+	// r.Get("/login", loginHandler)
+	// r.Get("/auth/callback", HandleOAuth1Callback)
+	r.Get("/login", twitterlogin.LoginHandler(app.Oauth1Config, nil).ServeHTTP)
+	r.Get("/auth/callback", twitterlogin.CallbackHandler(app.Oauth1Config, http.HandlerFunc(loginSuccessHandler), nil).ServeHTTP)
+
 	r.Get("/profile", getProfileHandler)
 	r.Post("/profile", updateProfileHandler)
-	r.Get("/auth/callback", HandleOAuth1Callback)
 
 	r.Get("/hc", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))

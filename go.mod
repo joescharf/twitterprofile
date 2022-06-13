@@ -6,8 +6,10 @@ require (
 	entgo.io/ent v0.10.1
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dghubble/go-twitter v0.0.0-20220428155120-ee736133298b
+	github.com/dghubble/gologin/v2 v2.3.0
 	github.com/dghubble/oauth1 v0.7.1
 	github.com/go-chi/chi/v5 v5.0.7
+	github.com/gorilla/sessions v1.2.1
 	github.com/grokify/go-pkce v0.2.0
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.4
@@ -28,6 +30,7 @@ require (
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/hashicorp/hcl/v2 v2.10.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect

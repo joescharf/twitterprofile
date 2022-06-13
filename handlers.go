@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/davecgh/go-spew/spew"
+	oauth1login "github.com/dghubble/gologin/v2/oauth1"
+	twitterlogin "github.com/dghubble/gologin/v2/twitter"
 	"github.com/joescharf/twitterprofile/v2/templates"
 
-	"github.com/dghubble/go-twitter/twitter"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -16,27 +18,42 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	templates.Home(w, p)
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	err := app.AuthTwitter1()
+func loginSuccessHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	accessToken, accessSecret, _ := oauth1login.AccessTokenFromContext(ctx)
+	twitterUser, err := twitterlogin.UserFromContext(ctx)
 	if err != nil {
 		w.WriteHeader(422)
-		w.Write([]byte(fmt.Sprintf("error logging in: %v", err)))
+		w.Write([]byte(fmt.Sprintf("error logging in : %v", err)))
 	}
+	// SAVE SESSION
+	session, _ := app.Store.Get(r, "twitterprofile")
+	session.Values["accessToken"] = accessToken
+	session.Values["accessSecret"] = accessSecret
+	session.Values["twitterUsername"] = twitterUser.Name
+	session.Values["twitterDescription"] = twitterUser.Description
+	err = session.Save(r, w)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf("error storing session : %v", err)))
+	}
+
+	spew.Dump(accessToken, accessSecret, twitterUser, err)
+	http.Redirect(w, r, "/profile", http.StatusFound)
 }
 
 func getProfileHandler(w http.ResponseWriter, r *http.Request) {
-	// Get the profile:
-	user, _, err := app.TwitterClient.Users.Show(&twitter.UserShowParams{
-		ScreenName: "joescharf",
-	})
+	// GET SESSION
+	session, err := app.Store.Get(r, "twitterprofile")
 	if err != nil {
-		w.WriteHeader(404)
-		w.Write([]byte(fmt.Sprintf("error getting profile: %v", err)))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf("error retrieving session : %v", err)))
 	}
-	app.UserDescription = user.Description
+	twitterDesc := session.Values["twitterDescription"].(string)
+	app.UserDescription = twitterDesc
 
 	p := templates.ProfileParams{
-		Description: user.Description,
+		Description: twitterDesc,
 	}
 	templates.Profile(w, p)
 }

@@ -8,12 +8,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/davecgh/go-spew/spew"
-
-	tclient "github.com/dghubble/go-twitter/twitter"
-	"github.com/dghubble/oauth1"
-	"github.com/dghubble/oauth1/twitter"
-
 	pkce "github.com/grokify/go-pkce"
 	"github.com/skratchdot/open-golang/open"
 	"golang.org/x/oauth2"
@@ -101,50 +95,4 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) {
 	app.Token = token
 	// close the HTTP server
 	cleanup(app.Server)
-
-}
-
-func (a *App) AuthTwitter1() error {
-	a.Oauth1Config = &oauth1.Config{
-		ConsumerKey:    a.Tp.APIKey,
-		ConsumerSecret: a.Tp.APISecret,
-		CallbackURL:    "http://localhost:3000/auth/callback",
-		Endpoint:       twitter.AuthorizeEndpoint,
-	}
-	requestToken, requestSecret, err := a.Oauth1Config.RequestToken()
-	if err != nil {
-		return err
-	}
-	a.OA1RequestSecret = requestSecret
-	authURL, err := a.Oauth1Config.AuthorizationURL(requestToken)
-
-	// open a browser window to the authorizationURL
-	err = open.Start(authURL.String())
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-func HandleOAuth1Callback(w http.ResponseWriter, r *http.Request) {
-	// Get the authorization code from query parameters
-	requestToken, verifier, err := oauth1.ParseAuthorizationCallback(r)
-	if err != nil {
-		fmt.Println("HandleOauth1Callback: ParseAuthorizationCallback Error")
-		return
-	}
-	accessToken, accessSecret, err := app.Oauth1Config.AccessToken(requestToken, app.OA1RequestSecret, verifier)
-	if err != nil {
-		fmt.Println("HandleOauth1Callback: AccessToken Error")
-		return
-	}
-
-	token := oauth1.NewToken(accessToken, accessSecret)
-	app.Token1 = token
-	spew.Dump("TOKEN:", token)
-
-	// Setup twitter client
-	app.HttpClient1 = app.Oauth1Config.Client(r.Context(), app.Token1)
-	app.TwitterClient = tclient.NewClient(app.HttpClient1)
-
 }
