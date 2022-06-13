@@ -54,6 +54,7 @@ type App struct {
 var app *App
 
 func init() {
+	// https://pkg.go.dev/github.com/gorilla/sessions#pkg-overview
 	gob.Register(&twitter.User{})
 }
 
@@ -97,6 +98,7 @@ func main() {
 	}
 
 	// WEBSERVER and ROUTES
+	// https://go-chi.io/#/pages/routing?id=routing-groups
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -107,18 +109,24 @@ func main() {
 	cssDir := http.Dir(filepath.Join(workDir, "dist/css"))
 	FileServer(r, "/css", cssDir)
 
-	// Routes
-	r.Get("/", indexHandler)
+	// Public Routes
+	r.Group(func(r chi.Router) {
+		r.Get("/", indexHandler)
 
-	// https://github.com/dghubble/gologin#twitter-oauth1
-	r.Get("/login", twitterlogin.LoginHandler(app.Oauth1Config, nil).ServeHTTP)
-	r.Get("/auth/callback", twitterlogin.CallbackHandler(app.Oauth1Config, http.HandlerFunc(loginSuccessHandler), nil).ServeHTTP)
+		// https://github.com/dghubble/gologin#twitter-oauth1
+		r.Get("/login", twitterlogin.LoginHandler(app.Oauth1Config, nil).ServeHTTP)
+		r.Get("/auth/callback", twitterlogin.CallbackHandler(app.Oauth1Config, http.HandlerFunc(loginSuccessHandler), nil).ServeHTTP)
 
-	r.Get("/profile", getProfileHandler)
-	r.Post("/profile", updateProfileHandler)
+		r.Get("/hc", func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte("OK"))
+		})
+	})
 
-	r.Get("/hc", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("OK"))
+	// Private Routes
+	r.Group(func(r chi.Router) {
+		r.Use(GetCookieMiddleware)
+		r.Get("/profile", getProfileHandler)
+		r.Post("/profile", updateProfileHandler)
 	})
 
 	// START SERVERS and GOROUTINES

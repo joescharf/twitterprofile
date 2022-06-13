@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -12,6 +13,30 @@ import (
 
 	"github.com/go-chi/chi/v5"
 )
+
+// GetCookieMiddleware - see https://go-chi.io/#/pages/middleware
+func GetCookieMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		session, err := app.Store.Get(r, "twitterprofile")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(fmt.Sprintf("error retrieving session : %v", err)))
+		}
+		twitterDesc := session.Values["twitterDescription"].(string)
+
+		// Set the request contexts:
+		ctx := context.WithValue(r.Context(), "twitterDescription", twitterDesc)
+
+		// call the next handler in the chain, passing the response writer and
+		// the updated request object with the new context value.
+		//
+		// note: context.Context values are nested, so any previously set
+		// values will be accessible as well, and the new `"user"` key
+		// will be accessible from this point forward.
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	p := templates.HomeParams{}
@@ -43,13 +68,8 @@ func loginSuccessHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getProfileHandler(w http.ResponseWriter, r *http.Request) {
-	// GET SESSION
-	session, err := app.Store.Get(r, "twitterprofile")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Sprintf("error retrieving session : %v", err)))
-	}
-	twitterDesc := session.Values["twitterDescription"].(string)
+
+	twitterDesc := r.Context().Value("twitterDescription").(string)
 	app.UserDescription = twitterDesc
 
 	p := templates.ProfileParams{
