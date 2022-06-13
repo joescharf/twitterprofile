@@ -15,7 +15,6 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/dghubble/go-twitter/twitter"
 	twitterlogin "github.com/dghubble/gologin/v2/twitter"
 	"github.com/dghubble/oauth1"
 	twitteroa1 "github.com/dghubble/oauth1/twitter"
@@ -25,6 +24,7 @@ import (
 	"github.com/gorilla/sessions"
 
 	"github.com/joescharf/twitterprofile/v2/ent"
+	"github.com/joescharf/twitterprofile/v2/templates"
 	"github.com/joho/godotenv"
 
 	_ "github.com/lib/pq"
@@ -38,24 +38,31 @@ type TP struct {
 	ClientID     string
 	SessionKey   string
 }
+type TwitterInfo struct {
+	UserID       int64
+	AccessToken  string
+	AccessSecret string
+	ScreenName   string
+	Description  string
+}
 
 type App struct {
-	Tp              *TP
-	Server          *http.Server
-	Store           *sessions.CookieStore
-	Oauth2Config    *oauth2.Config
-	Oauth1Config    *oauth1.Config
-	CodeVerifier    string
-	Token           *oauth2.Token
-	HttpClient1     *http.Client
-	UserDescription string
+	Tp           *TP
+	Server       *http.Server
+	Store        *sessions.CookieStore
+	Oauth2Config *oauth2.Config
+	Oauth1Config *oauth1.Config
+	CodeVerifier string
+	Token        *oauth2.Token
+	HttpClient1  *http.Client
 }
 
 var app *App
 
 func init() {
 	// https://pkg.go.dev/github.com/gorilla/sessions#pkg-overview
-	gob.Register(&twitter.User{})
+	gob.Register(&TwitterInfo{})
+	gob.Register(&templates.Flash{})
 }
 
 func main() {
@@ -103,6 +110,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(GetFlashMiddleware)
 
 	// Static locations:
 	workDir, _ := os.Getwd()

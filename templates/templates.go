@@ -9,12 +9,18 @@ import (
 //go:embed *
 var files embed.FS
 
+type Flash struct {
+	Title   string
+	Message string
+}
+
 var (
 	home    = parse("index.html")
 	profile = parse("profile.html")
 )
 
 type HomeParams struct {
+	Flashes []*Flash
 }
 
 func Home(w io.Writer, p HomeParams) error {
@@ -22,6 +28,7 @@ func Home(w io.Writer, p HomeParams) error {
 }
 
 type ProfileParams struct {
+	ScreenName  string
 	Description string
 }
 
