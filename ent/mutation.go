@@ -30,17 +30,20 @@ const (
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	handle        *string
-	token         *string
-	token_secret  *string
-	created_at    *time.Time
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*User, error)
-	predicates    []predicate.User
+	op                 Op
+	typ                string
+	id                 *int
+	screen_name        *string
+	twitter_user_id    *int64
+	addtwitter_user_id *int64
+	token              *string
+	token_secret       *string
+	created_at         *time.Time
+	updated_at         *time.Time
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*User, error)
+	predicates         []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -141,40 +144,96 @@ func (m *UserMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
-// SetHandle sets the "handle" field.
-func (m *UserMutation) SetHandle(s string) {
-	m.handle = &s
+// SetScreenName sets the "screen_name" field.
+func (m *UserMutation) SetScreenName(s string) {
+	m.screen_name = &s
 }
 
-// Handle returns the value of the "handle" field in the mutation.
-func (m *UserMutation) Handle() (r string, exists bool) {
-	v := m.handle
+// ScreenName returns the value of the "screen_name" field in the mutation.
+func (m *UserMutation) ScreenName() (r string, exists bool) {
+	v := m.screen_name
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldHandle returns the old "handle" field's value of the User entity.
+// OldScreenName returns the old "screen_name" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldHandle(ctx context.Context) (v string, err error) {
+func (m *UserMutation) OldScreenName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldHandle is only allowed on UpdateOne operations")
+		return v, errors.New("OldScreenName is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldHandle requires an ID field in the mutation")
+		return v, errors.New("OldScreenName requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldHandle: %w", err)
+		return v, fmt.Errorf("querying old value for OldScreenName: %w", err)
 	}
-	return oldValue.Handle, nil
+	return oldValue.ScreenName, nil
 }
 
-// ResetHandle resets all changes to the "handle" field.
-func (m *UserMutation) ResetHandle() {
-	m.handle = nil
+// ResetScreenName resets all changes to the "screen_name" field.
+func (m *UserMutation) ResetScreenName() {
+	m.screen_name = nil
+}
+
+// SetTwitterUserID sets the "twitter_user_id" field.
+func (m *UserMutation) SetTwitterUserID(i int64) {
+	m.twitter_user_id = &i
+	m.addtwitter_user_id = nil
+}
+
+// TwitterUserID returns the value of the "twitter_user_id" field in the mutation.
+func (m *UserMutation) TwitterUserID() (r int64, exists bool) {
+	v := m.twitter_user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTwitterUserID returns the old "twitter_user_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldTwitterUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTwitterUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTwitterUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTwitterUserID: %w", err)
+	}
+	return oldValue.TwitterUserID, nil
+}
+
+// AddTwitterUserID adds i to the "twitter_user_id" field.
+func (m *UserMutation) AddTwitterUserID(i int64) {
+	if m.addtwitter_user_id != nil {
+		*m.addtwitter_user_id += i
+	} else {
+		m.addtwitter_user_id = &i
+	}
+}
+
+// AddedTwitterUserID returns the value that was added to the "twitter_user_id" field in this mutation.
+func (m *UserMutation) AddedTwitterUserID() (r int64, exists bool) {
+	v := m.addtwitter_user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTwitterUserID resets all changes to the "twitter_user_id" field.
+func (m *UserMutation) ResetTwitterUserID() {
+	m.twitter_user_id = nil
+	m.addtwitter_user_id = nil
 }
 
 // SetToken sets the "token" field.
@@ -285,6 +344,42 @@ func (m *UserMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (m *UserMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *UserMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *UserMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -304,9 +399,12 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 4)
-	if m.handle != nil {
-		fields = append(fields, user.FieldHandle)
+	fields := make([]string, 0, 6)
+	if m.screen_name != nil {
+		fields = append(fields, user.FieldScreenName)
+	}
+	if m.twitter_user_id != nil {
+		fields = append(fields, user.FieldTwitterUserID)
 	}
 	if m.token != nil {
 		fields = append(fields, user.FieldToken)
@@ -317,6 +415,9 @@ func (m *UserMutation) Fields() []string {
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
+	if m.updated_at != nil {
+		fields = append(fields, user.FieldUpdatedAt)
+	}
 	return fields
 }
 
@@ -325,14 +426,18 @@ func (m *UserMutation) Fields() []string {
 // schema.
 func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case user.FieldHandle:
-		return m.Handle()
+	case user.FieldScreenName:
+		return m.ScreenName()
+	case user.FieldTwitterUserID:
+		return m.TwitterUserID()
 	case user.FieldToken:
 		return m.Token()
 	case user.FieldTokenSecret:
 		return m.TokenSecret()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
+	case user.FieldUpdatedAt:
+		return m.UpdatedAt()
 	}
 	return nil, false
 }
@@ -342,14 +447,18 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case user.FieldHandle:
-		return m.OldHandle(ctx)
+	case user.FieldScreenName:
+		return m.OldScreenName(ctx)
+	case user.FieldTwitterUserID:
+		return m.OldTwitterUserID(ctx)
 	case user.FieldToken:
 		return m.OldToken(ctx)
 	case user.FieldTokenSecret:
 		return m.OldTokenSecret(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case user.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -359,12 +468,19 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *UserMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case user.FieldHandle:
+	case user.FieldScreenName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetHandle(v)
+		m.SetScreenName(v)
+		return nil
+	case user.FieldTwitterUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTwitterUserID(v)
 		return nil
 	case user.FieldToken:
 		v, ok := value.(string)
@@ -387,6 +503,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
+	case user.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -394,13 +517,21 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *UserMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addtwitter_user_id != nil {
+		fields = append(fields, user.FieldTwitterUserID)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case user.FieldTwitterUserID:
+		return m.AddedTwitterUserID()
+	}
 	return nil, false
 }
 
@@ -409,6 +540,13 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UserMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case user.FieldTwitterUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTwitterUserID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User numeric field %s", name)
 }
@@ -436,8 +574,11 @@ func (m *UserMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *UserMutation) ResetField(name string) error {
 	switch name {
-	case user.FieldHandle:
-		m.ResetHandle()
+	case user.FieldScreenName:
+		m.ResetScreenName()
+		return nil
+	case user.FieldTwitterUserID:
+		m.ResetTwitterUserID()
 		return nil
 	case user.FieldToken:
 		m.ResetToken()
@@ -447,6 +588,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case user.FieldUpdatedAt:
+		m.ResetUpdatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

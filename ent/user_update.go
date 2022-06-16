@@ -28,9 +28,22 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
-// SetHandle sets the "handle" field.
-func (uu *UserUpdate) SetHandle(s string) *UserUpdate {
-	uu.mutation.SetHandle(s)
+// SetScreenName sets the "screen_name" field.
+func (uu *UserUpdate) SetScreenName(s string) *UserUpdate {
+	uu.mutation.SetScreenName(s)
+	return uu
+}
+
+// SetTwitterUserID sets the "twitter_user_id" field.
+func (uu *UserUpdate) SetTwitterUserID(i int64) *UserUpdate {
+	uu.mutation.ResetTwitterUserID()
+	uu.mutation.SetTwitterUserID(i)
+	return uu
+}
+
+// AddTwitterUserID adds i to the "twitter_user_id" field.
+func (uu *UserUpdate) AddTwitterUserID(i int64) *UserUpdate {
+	uu.mutation.AddTwitterUserID(i)
 	return uu
 }
 
@@ -56,6 +69,20 @@ func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
 func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
 	if t != nil {
 		uu.SetCreatedAt(*t)
+	}
+	return uu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetUpdatedAt(t)
+	return uu
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableUpdatedAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetUpdatedAt(*t)
 	}
 	return uu
 }
@@ -137,11 +164,25 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := uu.mutation.Handle(); ok {
+	if value, ok := uu.mutation.ScreenName(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldHandle,
+			Column: user.FieldScreenName,
+		})
+	}
+	if value, ok := uu.mutation.TwitterUserID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: user.FieldTwitterUserID,
+		})
+	}
+	if value, ok := uu.mutation.AddedTwitterUserID(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: user.FieldTwitterUserID,
 		})
 	}
 	if value, ok := uu.mutation.Token(); ok {
@@ -165,6 +206,13 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldCreatedAt,
 		})
 	}
+	if value, ok := uu.mutation.UpdatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldUpdatedAt,
+		})
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -184,9 +232,22 @@ type UserUpdateOne struct {
 	mutation *UserMutation
 }
 
-// SetHandle sets the "handle" field.
-func (uuo *UserUpdateOne) SetHandle(s string) *UserUpdateOne {
-	uuo.mutation.SetHandle(s)
+// SetScreenName sets the "screen_name" field.
+func (uuo *UserUpdateOne) SetScreenName(s string) *UserUpdateOne {
+	uuo.mutation.SetScreenName(s)
+	return uuo
+}
+
+// SetTwitterUserID sets the "twitter_user_id" field.
+func (uuo *UserUpdateOne) SetTwitterUserID(i int64) *UserUpdateOne {
+	uuo.mutation.ResetTwitterUserID()
+	uuo.mutation.SetTwitterUserID(i)
+	return uuo
+}
+
+// AddTwitterUserID adds i to the "twitter_user_id" field.
+func (uuo *UserUpdateOne) AddTwitterUserID(i int64) *UserUpdateOne {
+	uuo.mutation.AddTwitterUserID(i)
 	return uuo
 }
 
@@ -212,6 +273,20 @@ func (uuo *UserUpdateOne) SetCreatedAt(t time.Time) *UserUpdateOne {
 func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
 	if t != nil {
 		uuo.SetCreatedAt(*t)
+	}
+	return uuo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetUpdatedAt(t)
+	return uuo
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableUpdatedAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetUpdatedAt(*t)
 	}
 	return uuo
 }
@@ -317,11 +392,25 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
-	if value, ok := uuo.mutation.Handle(); ok {
+	if value, ok := uuo.mutation.ScreenName(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldHandle,
+			Column: user.FieldScreenName,
+		})
+	}
+	if value, ok := uuo.mutation.TwitterUserID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: user.FieldTwitterUserID,
+		})
+	}
+	if value, ok := uuo.mutation.AddedTwitterUserID(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: user.FieldTwitterUserID,
 		})
 	}
 	if value, ok := uuo.mutation.Token(); ok {
@@ -343,6 +432,13 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: user.FieldCreatedAt,
+		})
+	}
+	if value, ok := uuo.mutation.UpdatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldUpdatedAt,
 		})
 	}
 	_node = &User{config: uuo.config}

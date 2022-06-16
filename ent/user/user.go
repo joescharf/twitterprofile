@@ -11,14 +11,18 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldHandle holds the string denoting the handle field in the database.
-	FieldHandle = "handle"
+	// FieldScreenName holds the string denoting the screen_name field in the database.
+	FieldScreenName = "screen_name"
+	// FieldTwitterUserID holds the string denoting the twitter_user_id field in the database.
+	FieldTwitterUserID = "twitter_user_id"
 	// FieldToken holds the string denoting the token field in the database.
 	FieldToken = "token"
 	// FieldTokenSecret holds the string denoting the token_secret field in the database.
 	FieldTokenSecret = "token_secret"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 )
@@ -26,10 +30,12 @@ const (
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
-	FieldHandle,
+	FieldScreenName,
+	FieldTwitterUserID,
 	FieldToken,
 	FieldTokenSecret,
 	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -45,4 +51,6 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
 )

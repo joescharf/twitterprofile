@@ -14,6 +14,7 @@ require (
 	github.com/lib/pq v1.10.4
 	github.com/michimani/gotwi v0.11.4
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
+	go.uber.org/zap v1.21.0
 	golang.org/x/oauth2 v0.0.0-20220524215830-622c5d57e401
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 )
@@ -35,6 +36,8 @@ require (
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2 // indirect
 	golang.org/x/text v0.3.7 // indirect

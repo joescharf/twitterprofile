@@ -15,10 +15,13 @@ type User struct {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("handle").Unique(),
+		field.String("screen_name").Unique(),
+		field.Int64("twitter_user_id").Unique(),
 		field.String("token"),
 		field.String("token_secret"),
 		field.Time("created_at").
+			Default(time.Now),
+		field.Time("updated_at").
 			Default(time.Now),
 	}
 }

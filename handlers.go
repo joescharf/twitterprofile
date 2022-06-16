@@ -9,10 +9,22 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	oauth1login "github.com/dghubble/gologin/v2/oauth1"
 	twitterlogin "github.com/dghubble/gologin/v2/twitter"
+	"github.com/gorilla/sessions"
+	"github.com/joescharf/twitterprofile/v2/ent/user"
 	"github.com/joescharf/twitterprofile/v2/templates"
 
 	"github.com/go-chi/chi/v5"
 )
+
+func FlashError(w http.ResponseWriter, r *http.Request, session *sessions.Session, title, message, uri string, status int) {
+	flash := &templates.Flash{
+		Title:   title,
+		Message: message,
+	}
+	session.AddFlash(flash)
+	session.Save(r, w)
+	http.Redirect(w, r, uri, status)
+}
 
 func GetFlashMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -38,13 +50,7 @@ func GetCookieMiddleware(next http.Handler) http.Handler {
 		// Get the session from the request
 		session, err := app.Store.Get(r, "twitterprofile")
 		if err != nil {
-			flash := &templates.Flash{
-				Title:   "Error",
-				Message: "Error getting session",
-			}
-			session.AddFlash(flash)
-			session.Save(r, w)
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			FlashError(w, r, session, "Error", "Error getting session", "/", http.StatusSeeOther)
 			return
 		}
 
@@ -53,15 +59,19 @@ func GetCookieMiddleware(next http.Handler) http.Handler {
 		var twitterInfo = &TwitterInfo{}
 		twitterInfo, ok := val.(*TwitterInfo)
 		if !ok {
-			flash := &templates.Flash{
-				Title:   "Error",
-				Message: "Error retrieving twitterInfo",
-			}
-			session.AddFlash(flash)
-			session.Save(r, w)
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			FlashError(w, r, session, "Error", "Error getting twitterInfo from session", "/", http.StatusSeeOther)
 			return
 		}
+
+		// Get the user from the database
+		user, err := app.DB.User.Query().
+			Where(user.TwitterUserIDEQ(twitterInfo.UserID)).
+			Only(r.Context())
+		if err != nil {
+			FlashError(w, r, session, "Error", "Error getting user from database", "/", http.StatusInternalServerError)
+			return
+		}
+		spew.Dump("DB USER:", user)
 
 		// Set the request contexts:
 		ctx := context.WithValue(r.Context(), "twitterInfo", twitterInfo)
@@ -72,6 +82,8 @@ func GetCookieMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// indexHandler
+// flash handling: https://github.com/gorilla/sessions/issues/57
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	// Get the flashes and check to see if there are any
 	val := r.Context().Value("flashes")
@@ -114,11 +126,22 @@ func loginSuccessHandler(w http.ResponseWriter, r *http.Request) {
 	session.Values["twitterInfo"] = twitterInfo
 	err = session.Save(r, w)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Sprintf("error storing session : %v", err)))
+		FlashError(w, r, session, "Error", "Error saving session", "/", http.StatusSeeOther)
+		return
 	}
 
-	spew.Dump(accessToken, accessSecret, twitterUser.Name, twitterUser.IDStr, twitterUser.ScreenName, err)
+	// Create or Update User in DB
+	_, err = app.DB.User.Create().
+		SetScreenName(twitterInfo.ScreenName).
+		SetTwitterUserID(twitterInfo.UserID).
+		SetToken(twitterInfo.AccessToken).
+		SetTokenSecret(twitterInfo.AccessSecret).
+		Save(ctx)
+	if err != nil {
+		FlashError(w, r, session, "Error", "Error saving user to database: "+err.Error(), "/", http.StatusSeeOther)
+		return
+	}
+
 	http.Redirect(w, r, "/profile", http.StatusFound)
 }
 

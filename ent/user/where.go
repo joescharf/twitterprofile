@@ -92,10 +92,17 @@ func IDLTE(id int) predicate.User {
 	})
 }
 
-// Handle applies equality check predicate on the "handle" field. It's identical to HandleEQ.
-func Handle(v string) predicate.User {
+// ScreenName applies equality check predicate on the "screen_name" field. It's identical to ScreenNameEQ.
+func ScreenName(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldHandle), v))
+		s.Where(sql.EQ(s.C(FieldScreenName), v))
+	})
+}
+
+// TwitterUserID applies equality check predicate on the "twitter_user_id" field. It's identical to TwitterUserIDEQ.
+func TwitterUserID(v int64) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTwitterUserID), v))
 	})
 }
 
@@ -120,22 +127,29 @@ func CreatedAt(v time.Time) predicate.User {
 	})
 }
 
-// HandleEQ applies the EQ predicate on the "handle" field.
-func HandleEQ(v string) predicate.User {
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldHandle), v))
+		s.Where(sql.EQ(s.C(FieldUpdatedAt), v))
 	})
 }
 
-// HandleNEQ applies the NEQ predicate on the "handle" field.
-func HandleNEQ(v string) predicate.User {
+// ScreenNameEQ applies the EQ predicate on the "screen_name" field.
+func ScreenNameEQ(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldHandle), v))
+		s.Where(sql.EQ(s.C(FieldScreenName), v))
 	})
 }
 
-// HandleIn applies the In predicate on the "handle" field.
-func HandleIn(vs ...string) predicate.User {
+// ScreenNameNEQ applies the NEQ predicate on the "screen_name" field.
+func ScreenNameNEQ(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldScreenName), v))
+	})
+}
+
+// ScreenNameIn applies the In predicate on the "screen_name" field.
+func ScreenNameIn(vs ...string) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -147,12 +161,12 @@ func HandleIn(vs ...string) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldHandle), v...))
+		s.Where(sql.In(s.C(FieldScreenName), v...))
 	})
 }
 
-// HandleNotIn applies the NotIn predicate on the "handle" field.
-func HandleNotIn(vs ...string) predicate.User {
+// ScreenNameNotIn applies the NotIn predicate on the "screen_name" field.
+func ScreenNameNotIn(vs ...string) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -164,70 +178,146 @@ func HandleNotIn(vs ...string) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldHandle), v...))
+		s.Where(sql.NotIn(s.C(FieldScreenName), v...))
 	})
 }
 
-// HandleGT applies the GT predicate on the "handle" field.
-func HandleGT(v string) predicate.User {
+// ScreenNameGT applies the GT predicate on the "screen_name" field.
+func ScreenNameGT(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldHandle), v))
+		s.Where(sql.GT(s.C(FieldScreenName), v))
 	})
 }
 
-// HandleGTE applies the GTE predicate on the "handle" field.
-func HandleGTE(v string) predicate.User {
+// ScreenNameGTE applies the GTE predicate on the "screen_name" field.
+func ScreenNameGTE(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldHandle), v))
+		s.Where(sql.GTE(s.C(FieldScreenName), v))
 	})
 }
 
-// HandleLT applies the LT predicate on the "handle" field.
-func HandleLT(v string) predicate.User {
+// ScreenNameLT applies the LT predicate on the "screen_name" field.
+func ScreenNameLT(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldHandle), v))
+		s.Where(sql.LT(s.C(FieldScreenName), v))
 	})
 }
 
-// HandleLTE applies the LTE predicate on the "handle" field.
-func HandleLTE(v string) predicate.User {
+// ScreenNameLTE applies the LTE predicate on the "screen_name" field.
+func ScreenNameLTE(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldHandle), v))
+		s.Where(sql.LTE(s.C(FieldScreenName), v))
 	})
 }
 
-// HandleContains applies the Contains predicate on the "handle" field.
-func HandleContains(v string) predicate.User {
+// ScreenNameContains applies the Contains predicate on the "screen_name" field.
+func ScreenNameContains(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldHandle), v))
+		s.Where(sql.Contains(s.C(FieldScreenName), v))
 	})
 }
 
-// HandleHasPrefix applies the HasPrefix predicate on the "handle" field.
-func HandleHasPrefix(v string) predicate.User {
+// ScreenNameHasPrefix applies the HasPrefix predicate on the "screen_name" field.
+func ScreenNameHasPrefix(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldHandle), v))
+		s.Where(sql.HasPrefix(s.C(FieldScreenName), v))
 	})
 }
 
-// HandleHasSuffix applies the HasSuffix predicate on the "handle" field.
-func HandleHasSuffix(v string) predicate.User {
+// ScreenNameHasSuffix applies the HasSuffix predicate on the "screen_name" field.
+func ScreenNameHasSuffix(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldHandle), v))
+		s.Where(sql.HasSuffix(s.C(FieldScreenName), v))
 	})
 }
 
-// HandleEqualFold applies the EqualFold predicate on the "handle" field.
-func HandleEqualFold(v string) predicate.User {
+// ScreenNameEqualFold applies the EqualFold predicate on the "screen_name" field.
+func ScreenNameEqualFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldHandle), v))
+		s.Where(sql.EqualFold(s.C(FieldScreenName), v))
 	})
 }
 
-// HandleContainsFold applies the ContainsFold predicate on the "handle" field.
-func HandleContainsFold(v string) predicate.User {
+// ScreenNameContainsFold applies the ContainsFold predicate on the "screen_name" field.
+func ScreenNameContainsFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldHandle), v))
+		s.Where(sql.ContainsFold(s.C(FieldScreenName), v))
+	})
+}
+
+// TwitterUserIDEQ applies the EQ predicate on the "twitter_user_id" field.
+func TwitterUserIDEQ(v int64) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTwitterUserID), v))
+	})
+}
+
+// TwitterUserIDNEQ applies the NEQ predicate on the "twitter_user_id" field.
+func TwitterUserIDNEQ(v int64) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTwitterUserID), v))
+	})
+}
+
+// TwitterUserIDIn applies the In predicate on the "twitter_user_id" field.
+func TwitterUserIDIn(vs ...int64) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldTwitterUserID), v...))
+	})
+}
+
+// TwitterUserIDNotIn applies the NotIn predicate on the "twitter_user_id" field.
+func TwitterUserIDNotIn(vs ...int64) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldTwitterUserID), v...))
+	})
+}
+
+// TwitterUserIDGT applies the GT predicate on the "twitter_user_id" field.
+func TwitterUserIDGT(v int64) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTwitterUserID), v))
+	})
+}
+
+// TwitterUserIDGTE applies the GTE predicate on the "twitter_user_id" field.
+func TwitterUserIDGTE(v int64) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTwitterUserID), v))
+	})
+}
+
+// TwitterUserIDLT applies the LT predicate on the "twitter_user_id" field.
+func TwitterUserIDLT(v int64) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTwitterUserID), v))
+	})
+}
+
+// TwitterUserIDLTE applies the LTE predicate on the "twitter_user_id" field.
+func TwitterUserIDLTE(v int64) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTwitterUserID), v))
 	})
 }
 
@@ -526,6 +616,82 @@ func CreatedAtLT(v time.Time) predicate.User {
 func CreatedAtLTE(v time.Time) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCreatedAt), v))
+	})
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldUpdatedAt), v))
+	})
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldUpdatedAt), v))
+	})
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldUpdatedAt), v...))
+	})
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldUpdatedAt), v...))
+	})
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldUpdatedAt), v))
+	})
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldUpdatedAt), v))
+	})
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldUpdatedAt), v))
+	})
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldUpdatedAt), v))
 	})
 }
 

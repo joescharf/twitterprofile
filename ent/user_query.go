@@ -254,12 +254,12 @@ func (uq *UserQuery) Clone() *UserQuery {
 // Example:
 //
 //	var v []struct {
-//		Handle string `json:"handle,omitempty"`
+//		ScreenName string `json:"screen_name,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		GroupBy(user.FieldHandle).
+//		GroupBy(user.FieldScreenName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -281,11 +281,11 @@ func (uq *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Handle string `json:"handle,omitempty"`
+//		ScreenName string `json:"screen_name,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		Select(user.FieldHandle).
+//		Select(user.FieldScreenName).
 //		Scan(ctx, &v)
 //
 func (uq *UserQuery) Select(fields ...string) *UserSelect {

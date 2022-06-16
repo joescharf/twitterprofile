@@ -11,10 +11,12 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "handle", Type: field.TypeString, Unique: true},
+		{Name: "screen_name", Type: field.TypeString, Unique: true},
+		{Name: "twitter_user_id", Type: field.TypeInt64, Unique: true},
 		{Name: "token", Type: field.TypeString},
 		{Name: "token_secret", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

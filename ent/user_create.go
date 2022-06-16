@@ -20,9 +20,15 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
-// SetHandle sets the "handle" field.
-func (uc *UserCreate) SetHandle(s string) *UserCreate {
-	uc.mutation.SetHandle(s)
+// SetScreenName sets the "screen_name" field.
+func (uc *UserCreate) SetScreenName(s string) *UserCreate {
+	uc.mutation.SetScreenName(s)
+	return uc
+}
+
+// SetTwitterUserID sets the "twitter_user_id" field.
+func (uc *UserCreate) SetTwitterUserID(i int64) *UserCreate {
+	uc.mutation.SetTwitterUserID(i)
 	return uc
 }
 
@@ -48,6 +54,20 @@ func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
 	if t != nil {
 		uc.SetCreatedAt(*t)
+	}
+	return uc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
+	uc.mutation.SetUpdatedAt(t)
+	return uc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetUpdatedAt(*t)
 	}
 	return uc
 }
@@ -127,12 +147,19 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := uc.mutation.UpdatedAt(); !ok {
+		v := user.DefaultUpdatedAt()
+		uc.mutation.SetUpdatedAt(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
-	if _, ok := uc.mutation.Handle(); !ok {
-		return &ValidationError{Name: "handle", err: errors.New(`ent: missing required field "User.handle"`)}
+	if _, ok := uc.mutation.ScreenName(); !ok {
+		return &ValidationError{Name: "screen_name", err: errors.New(`ent: missing required field "User.screen_name"`)}
+	}
+	if _, ok := uc.mutation.TwitterUserID(); !ok {
+		return &ValidationError{Name: "twitter_user_id", err: errors.New(`ent: missing required field "User.twitter_user_id"`)}
 	}
 	if _, ok := uc.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`ent: missing required field "User.token"`)}
@@ -142,6 +169,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
+	}
+	if _, ok := uc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "User.updated_at"`)}
 	}
 	return nil
 }
@@ -170,13 +200,21 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
-	if value, ok := uc.mutation.Handle(); ok {
+	if value, ok := uc.mutation.ScreenName(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: user.FieldHandle,
+			Column: user.FieldScreenName,
 		})
-		_node.Handle = value
+		_node.ScreenName = value
+	}
+	if value, ok := uc.mutation.TwitterUserID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: user.FieldTwitterUserID,
+		})
+		_node.TwitterUserID = value
 	}
 	if value, ok := uc.mutation.Token(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -201,6 +239,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldCreatedAt,
 		})
 		_node.CreatedAt = value
+	}
+	if value, ok := uc.mutation.UpdatedAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldUpdatedAt,
+		})
+		_node.UpdatedAt = value
 	}
 	return _node, _spec
 }

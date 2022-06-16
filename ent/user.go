@@ -16,14 +16,18 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Handle holds the value of the "handle" field.
-	Handle string `json:"handle,omitempty"`
+	// ScreenName holds the value of the "screen_name" field.
+	ScreenName string `json:"screen_name,omitempty"`
+	// TwitterUserID holds the value of the "twitter_user_id" field.
+	TwitterUserID int64 `json:"twitter_user_id,omitempty"`
 	// Token holds the value of the "token" field.
 	Token string `json:"token,omitempty"`
 	// TokenSecret holds the value of the "token_secret" field.
 	TokenSecret string `json:"token_secret,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -31,11 +35,11 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldID:
+		case user.FieldID, user.FieldTwitterUserID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldHandle, user.FieldToken, user.FieldTokenSecret:
+		case user.FieldScreenName, user.FieldToken, user.FieldTokenSecret:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt:
+		case user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
@@ -58,11 +62,17 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			u.ID = int(value.Int64)
-		case user.FieldHandle:
+		case user.FieldScreenName:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field handle", values[i])
+				return fmt.Errorf("unexpected type %T for field screen_name", values[i])
 			} else if value.Valid {
-				u.Handle = value.String
+				u.ScreenName = value.String
+			}
+		case user.FieldTwitterUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field twitter_user_id", values[i])
+			} else if value.Valid {
+				u.TwitterUserID = value.Int64
 			}
 		case user.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -81,6 +91,12 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				u.CreatedAt = value.Time
+			}
+		case user.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				u.UpdatedAt = value.Time
 			}
 		}
 	}
@@ -110,14 +126,18 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
-	builder.WriteString(", handle=")
-	builder.WriteString(u.Handle)
+	builder.WriteString(", screen_name=")
+	builder.WriteString(u.ScreenName)
+	builder.WriteString(", twitter_user_id=")
+	builder.WriteString(fmt.Sprintf("%v", u.TwitterUserID))
 	builder.WriteString(", token=")
 	builder.WriteString(u.Token)
 	builder.WriteString(", token_secret=")
 	builder.WriteString(u.TokenSecret)
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", updated_at=")
+	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
