@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/davecgh/go-spew/spew"
 	oauth1login "github.com/dghubble/gologin/v2/oauth1"
@@ -130,13 +131,16 @@ func loginSuccessHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create or Update User in DB
-	_, err = app.DB.User.Create().
+	// Upsert User in DB
+	err = app.DB.User.Create().
 		SetScreenName(twitterInfo.ScreenName).
 		SetTwitterUserID(twitterInfo.UserID).
 		SetToken(twitterInfo.AccessToken).
 		SetTokenSecret(twitterInfo.AccessSecret).
-		Save(ctx)
+		SetUpdatedAt(time.Now()).
+		OnConflictColumns("twitter_user_id").
+		UpdateNewValues().
+		Exec(ctx)
 	if err != nil {
 		FlashError(w, r, session, "Error", "Error saving user to database: "+err.Error(), "/", http.StatusSeeOther)
 		return
