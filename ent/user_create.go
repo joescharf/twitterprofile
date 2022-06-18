@@ -34,6 +34,20 @@ func (uc *UserCreate) SetTwitterUserID(i int64) *UserCreate {
 	return uc
 }
 
+// SetDescription sets the "description" field.
+func (uc *UserCreate) SetDescription(s string) *UserCreate {
+	uc.mutation.SetDescription(s)
+	return uc
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDescription(s *string) *UserCreate {
+	if s != nil {
+		uc.SetDescription(*s)
+	}
+	return uc
+}
+
 // SetToken sets the "token" field.
 func (uc *UserCreate) SetToken(s string) *UserCreate {
 	uc.mutation.SetToken(s)
@@ -219,6 +233,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		})
 		_node.TwitterUserID = value
 	}
+	if value, ok := uc.mutation.Description(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldDescription,
+		})
+		_node.Description = value
+	}
 	if value, ok := uc.mutation.Token(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -332,6 +354,24 @@ func (u *UserUpsert) UpdateTwitterUserID() *UserUpsert {
 // AddTwitterUserID adds v to the "twitter_user_id" field.
 func (u *UserUpsert) AddTwitterUserID(v int64) *UserUpsert {
 	u.Add(user.FieldTwitterUserID, v)
+	return u
+}
+
+// SetDescription sets the "description" field.
+func (u *UserUpsert) SetDescription(v string) *UserUpsert {
+	u.Set(user.FieldDescription, v)
+	return u
+}
+
+// UpdateDescription sets the "description" field to the value that was provided on create.
+func (u *UserUpsert) UpdateDescription() *UserUpsert {
+	u.SetExcluded(user.FieldDescription)
+	return u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (u *UserUpsert) ClearDescription() *UserUpsert {
+	u.SetNull(user.FieldDescription)
 	return u
 }
 
@@ -457,6 +497,27 @@ func (u *UserUpsertOne) AddTwitterUserID(v int64) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateTwitterUserID() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateTwitterUserID()
+	})
+}
+
+// SetDescription sets the "description" field.
+func (u *UserUpsertOne) SetDescription(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetDescription(v)
+	})
+}
+
+// UpdateDescription sets the "description" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateDescription() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateDescription()
+	})
+}
+
+// ClearDescription clears the value of the "description" field.
+func (u *UserUpsertOne) ClearDescription() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearDescription()
 	})
 }
 
@@ -752,6 +813,27 @@ func (u *UserUpsertBulk) AddTwitterUserID(v int64) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateTwitterUserID() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateTwitterUserID()
+	})
+}
+
+// SetDescription sets the "description" field.
+func (u *UserUpsertBulk) SetDescription(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetDescription(v)
+	})
+}
+
+// UpdateDescription sets the "description" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateDescription() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateDescription()
+	})
+}
+
+// ClearDescription clears the value of the "description" field.
+func (u *UserUpsertBulk) ClearDescription() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearDescription()
 	})
 }
 

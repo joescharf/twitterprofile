@@ -15,6 +15,8 @@ const (
 	FieldScreenName = "screen_name"
 	// FieldTwitterUserID holds the string denoting the twitter_user_id field in the database.
 	FieldTwitterUserID = "twitter_user_id"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
 	// FieldToken holds the string denoting the token field in the database.
 	FieldToken = "token"
 	// FieldTokenSecret holds the string denoting the token_secret field in the database.
@@ -32,6 +34,7 @@ var Columns = []string{
 	FieldID,
 	FieldScreenName,
 	FieldTwitterUserID,
+	FieldDescription,
 	FieldToken,
 	FieldTokenSecret,
 	FieldCreatedAt,

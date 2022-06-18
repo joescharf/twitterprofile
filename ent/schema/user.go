@@ -17,6 +17,7 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("screen_name").Unique(),
 		field.Int64("twitter_user_id").Unique(),
+		field.String("description").Optional(),
 		field.String("token"),
 		field.String("token_secret"),
 		field.Time("created_at").

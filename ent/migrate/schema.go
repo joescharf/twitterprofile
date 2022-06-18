@@ -13,6 +13,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "screen_name", Type: field.TypeString, Unique: true},
 		{Name: "twitter_user_id", Type: field.TypeInt64, Unique: true},
+		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "token", Type: field.TypeString},
 		{Name: "token_secret", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},

@@ -20,6 +20,8 @@ type User struct {
 	ScreenName string `json:"screen_name,omitempty"`
 	// TwitterUserID holds the value of the "twitter_user_id" field.
 	TwitterUserID int64 `json:"twitter_user_id,omitempty"`
+	// Description holds the value of the "description" field.
+	Description string `json:"description,omitempty"`
 	// Token holds the value of the "token" field.
 	Token string `json:"token,omitempty"`
 	// TokenSecret holds the value of the "token_secret" field.
@@ -37,7 +39,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case user.FieldID, user.FieldTwitterUserID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldScreenName, user.FieldToken, user.FieldTokenSecret:
+		case user.FieldScreenName, user.FieldDescription, user.FieldToken, user.FieldTokenSecret:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -73,6 +75,12 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field twitter_user_id", values[i])
 			} else if value.Valid {
 				u.TwitterUserID = value.Int64
+			}
+		case user.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				u.Description = value.String
 			}
 		case user.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -130,6 +138,8 @@ func (u *User) String() string {
 	builder.WriteString(u.ScreenName)
 	builder.WriteString(", twitter_user_id=")
 	builder.WriteString(fmt.Sprintf("%v", u.TwitterUserID))
+	builder.WriteString(", description=")
+	builder.WriteString(u.Description)
 	builder.WriteString(", token=")
 	builder.WriteString(u.Token)
 	builder.WriteString(", token_secret=")

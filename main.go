@@ -41,11 +41,11 @@ type TP struct {
 	ClientID     string
 }
 type TwitterInfo struct {
-	UserID       int64
-	AccessToken  string
-	AccessSecret string
-	ScreenName   string
-	Description  string
+	UserID int64
+	// AccessToken  string
+	// AccessSecret string
+	// ScreenName   string
+	// Description  string
 }
 
 type App struct {

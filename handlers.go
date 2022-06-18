@@ -11,6 +11,7 @@ import (
 	oauth1login "github.com/dghubble/gologin/v2/oauth1"
 	twitterlogin "github.com/dghubble/gologin/v2/twitter"
 	"github.com/gorilla/sessions"
+	"github.com/joescharf/twitterprofile/v2/ent"
 	"github.com/joescharf/twitterprofile/v2/ent/user"
 	"github.com/joescharf/twitterprofile/v2/templates"
 
@@ -47,7 +48,6 @@ func GetFlashMiddleware(next http.Handler) http.Handler {
 // GetCookieMiddleware - see https://go-chi.io/#/pages/middleware
 func GetCookieMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		// Get the session from the request
 		session, err := app.Store.Get(r, "twitterprofile")
 		if err != nil {
@@ -75,7 +75,8 @@ func GetCookieMiddleware(next http.Handler) http.Handler {
 		spew.Dump("DB USER:", user)
 
 		// Set the request contexts:
-		ctx := context.WithValue(r.Context(), "twitterInfo", twitterInfo)
+		// ctx := context.WithValue(r.Context(), "twitterInfo", twitterInfo)
+		ctx := context.WithValue(r.Context(), "user", user)
 
 		// call the next handler in the chain, passing the response writer and
 		// the updated request object with the new context value.
@@ -115,11 +116,11 @@ func loginSuccessHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Create twitterInfo struct:
 	twitterInfo := &TwitterInfo{
-		AccessToken:  accessToken,
-		AccessSecret: accessSecret,
-		ScreenName:   twitterUser.ScreenName,
-		UserID:       twitterUser.ID,
-		Description:  twitterUser.Description,
+		UserID: twitterUser.ID,
+		// AccessToken:  accessToken,
+		// AccessSecret: accessSecret,
+		// ScreenName:   twitterUser.ScreenName,
+		// Description:  twitterUser.Description,
 	}
 
 	// SAVE SESSION
@@ -133,10 +134,11 @@ func loginSuccessHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Upsert User in DB
 	err = app.DB.User.Create().
-		SetScreenName(twitterInfo.ScreenName).
 		SetTwitterUserID(twitterInfo.UserID).
-		SetToken(twitterInfo.AccessToken).
-		SetTokenSecret(twitterInfo.AccessSecret).
+		SetScreenName(twitterUser.ScreenName).
+		SetDescription(twitterUser.Description).
+		SetToken(accessToken).
+		SetTokenSecret(accessSecret).
 		SetUpdatedAt(time.Now()).
 		OnConflictColumns("twitter_user_id").
 		UpdateNewValues().
@@ -151,19 +153,22 @@ func loginSuccessHandler(w http.ResponseWriter, r *http.Request) {
 
 func getProfileHandler(w http.ResponseWriter, r *http.Request) {
 
-	twitterInfo := r.Context().Value("twitterInfo").(*TwitterInfo)
+	// Get user from context
+	user := r.Context().Value("user").(*ent.User)
 
 	p := templates.ProfileParams{
-		ScreenName:  twitterInfo.ScreenName,
-		Description: twitterInfo.Description,
+		ScreenName:  user.ScreenName,
+		Description: user.Description,
 	}
 	templates.Profile(w, p)
 }
-func updateProfileHandler(w http.ResponseWriter, r *http.Request) {
-	// Update the profile
-	twitterInfo := r.Context().Value("twitterInfo").(*TwitterInfo)
 
-	newDesc := twitterInfo.Description + "\nHello World."
+// updateProfileHandler updates the twitter profile
+func updateProfileHandler(w http.ResponseWriter, r *http.Request) {
+	// Get user from context
+	user := r.Context().Value("user").(*ent.User)
+
+	newDesc := user.Description + "\nHello World."
 	err := app.UpdateProfileDesc(app.HttpClient1, newDesc)
 	if err != nil {
 		w.WriteHeader(422)
