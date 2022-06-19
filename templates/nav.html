@@ -1,5 +1,11 @@
 {{ define "nav" }}
-  <nav class="bg-gray-800">
+  <nav
+    class="bg-gray-800"
+    x-data="{pages: 
+      [{title:'Home', uri:'/'}, 
+      {title:'Login', uri:'/login'}, 
+      {title: 'Profile', uri:'/profile'}], pathname: window.location.pathname}"
+  >
     <div class="px-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="relative flex items-center justify-between h-16">
         <div
@@ -7,23 +13,14 @@
         >
           <div class="hidden sm:block sm:ml-6">
             <div class="flex space-x-4">
-              <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-              <a
-                href="/"
-                class="px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-md"
-                aria-current="page"
-                >Home</a
-              >
-              <a
-                href="/login"
-                class="px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white"
-                >Login</a
-              >
-              <a
-                href="/profile"
-                class="px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white"
-                >Profile</a
-              >
+              <template x-for="page in pages">
+                <a
+                  :href="page.uri"
+                  :class="{'bg-gray-900 text-white': pathname === page.uri, 'text-gray-300 hover:bg-gray-700 hover:text-white': pathname !== page.uri}"
+                  class="px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white"
+                  x-text="page.title"
+                ></a>
+              </template>
             </div>
           </div>
         </div>
