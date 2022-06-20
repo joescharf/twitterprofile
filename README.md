@@ -6,3 +6,5 @@ npm i
 yarn dev
 ```
 
+## ent
+- `ent generate --feature sql/upsert ./ent/schema`
