@@ -1,3 +1,4 @@
+//ent generate --feature sql/upsert ./ent/schema
 package schema
 
 import (
@@ -20,6 +21,7 @@ func (User) Fields() []ent.Field {
 		field.String("description").Optional(),
 		field.String("token"),
 		field.String("token_secret"),
+		field.String("twitter_profile_image_url").Optional(),
 		field.Time("created_at").
 			Default(time.Now),
 		field.Time("updated_at").

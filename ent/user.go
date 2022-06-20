@@ -26,6 +26,8 @@ type User struct {
 	Token string `json:"token,omitempty"`
 	// TokenSecret holds the value of the "token_secret" field.
 	TokenSecret string `json:"token_secret,omitempty"`
+	// TwitterProfileImageURL holds the value of the "twitter_profile_image_url" field.
+	TwitterProfileImageURL string `json:"twitter_profile_image_url,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -39,7 +41,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case user.FieldID, user.FieldTwitterUserID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldScreenName, user.FieldDescription, user.FieldToken, user.FieldTokenSecret:
+		case user.FieldScreenName, user.FieldDescription, user.FieldToken, user.FieldTokenSecret, user.FieldTwitterProfileImageURL:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -94,6 +96,12 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				u.TokenSecret = value.String
 			}
+		case user.FieldTwitterProfileImageURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field twitter_profile_image_url", values[i])
+			} else if value.Valid {
+				u.TwitterProfileImageURL = value.String
+			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -144,6 +152,8 @@ func (u *User) String() string {
 	builder.WriteString(u.Token)
 	builder.WriteString(", token_secret=")
 	builder.WriteString(u.TokenSecret)
+	builder.WriteString(", twitter_profile_image_url=")
+	builder.WriteString(u.TwitterProfileImageURL)
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")

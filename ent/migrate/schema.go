@@ -16,6 +16,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "token", Type: field.TypeString},
 		{Name: "token_secret", Type: field.TypeString},
+		{Name: "twitter_profile_image_url", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}

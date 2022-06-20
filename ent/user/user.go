@@ -21,6 +21,8 @@ const (
 	FieldToken = "token"
 	// FieldTokenSecret holds the string denoting the token_secret field in the database.
 	FieldTokenSecret = "token_secret"
+	// FieldTwitterProfileImageURL holds the string denoting the twitter_profile_image_url field in the database.
+	FieldTwitterProfileImageURL = "twitter_profile_image_url"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -37,6 +39,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldToken,
 	FieldTokenSecret,
+	FieldTwitterProfileImageURL,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }

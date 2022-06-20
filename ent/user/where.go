@@ -127,6 +127,13 @@ func TokenSecret(v string) predicate.User {
 	})
 }
 
+// TwitterProfileImageURL applies equality check predicate on the "twitter_profile_image_url" field. It's identical to TwitterProfileImageURLEQ.
+func TwitterProfileImageURL(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -672,6 +679,131 @@ func TokenSecretEqualFold(v string) predicate.User {
 func TokenSecretContainsFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldTokenSecret), v))
+	})
+}
+
+// TwitterProfileImageURLEQ applies the EQ predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLEQ(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// TwitterProfileImageURLNEQ applies the NEQ predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLNEQ(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// TwitterProfileImageURLIn applies the In predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLIn(vs ...string) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldTwitterProfileImageURL), v...))
+	})
+}
+
+// TwitterProfileImageURLNotIn applies the NotIn predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLNotIn(vs ...string) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldTwitterProfileImageURL), v...))
+	})
+}
+
+// TwitterProfileImageURLGT applies the GT predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLGT(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// TwitterProfileImageURLGTE applies the GTE predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLGTE(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// TwitterProfileImageURLLT applies the LT predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLLT(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// TwitterProfileImageURLLTE applies the LTE predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLLTE(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// TwitterProfileImageURLContains applies the Contains predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLContains(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// TwitterProfileImageURLHasPrefix applies the HasPrefix predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLHasPrefix(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// TwitterProfileImageURLHasSuffix applies the HasSuffix predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLHasSuffix(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// TwitterProfileImageURLIsNil applies the IsNil predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLIsNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTwitterProfileImageURL)))
+	})
+}
+
+// TwitterProfileImageURLNotNil applies the NotNil predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLNotNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTwitterProfileImageURL)))
+	})
+}
+
+// TwitterProfileImageURLEqualFold applies the EqualFold predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLEqualFold(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// TwitterProfileImageURLContainsFold applies the ContainsFold predicate on the "twitter_profile_image_url" field.
+func TwitterProfileImageURLContainsFold(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldTwitterProfileImageURL), v))
 	})
 }
 

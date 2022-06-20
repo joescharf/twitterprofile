@@ -15,24 +15,38 @@ type Flash struct {
 }
 
 var (
-	home    = parse("index.html")
-	profile = parse("profile.html")
+	layout       = parse("layout.html")
+	home         = parse("index.html")
+	profile      = parse("profile.html")
+	layoutParams LayoutParams
 )
 
+type LayoutParams struct {
+	ProfileImageURL string
+}
+
+func SetLayoutParams(p LayoutParams) {
+	layoutParams = p
+}
+
 type HomeParams struct {
+	LayoutParams
 	Flashes []*Flash
 }
 
 func Home(w io.Writer, p HomeParams) error {
+	p.LayoutParams = layoutParams
 	return home.Execute(w, p)
 }
 
 type ProfileParams struct {
+	LayoutParams
 	ScreenName  string
 	Description string
 }
 
 func Profile(w io.Writer, p ProfileParams) error {
+	p.LayoutParams = layoutParams
 	return profile.Execute(w, p)
 }
 

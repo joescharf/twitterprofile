@@ -79,6 +79,26 @@ func (uu *UserUpdate) SetTokenSecret(s string) *UserUpdate {
 	return uu
 }
 
+// SetTwitterProfileImageURL sets the "twitter_profile_image_url" field.
+func (uu *UserUpdate) SetTwitterProfileImageURL(s string) *UserUpdate {
+	uu.mutation.SetTwitterProfileImageURL(s)
+	return uu
+}
+
+// SetNillableTwitterProfileImageURL sets the "twitter_profile_image_url" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableTwitterProfileImageURL(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetTwitterProfileImageURL(*s)
+	}
+	return uu
+}
+
+// ClearTwitterProfileImageURL clears the value of the "twitter_profile_image_url" field.
+func (uu *UserUpdate) ClearTwitterProfileImageURL() *UserUpdate {
+	uu.mutation.ClearTwitterProfileImageURL()
+	return uu
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
 	uu.mutation.SetCreatedAt(t)
@@ -232,6 +252,19 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldTokenSecret,
 		})
 	}
+	if value, ok := uu.mutation.TwitterProfileImageURL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldTwitterProfileImageURL,
+		})
+	}
+	if uu.mutation.TwitterProfileImageURLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: user.FieldTwitterProfileImageURL,
+		})
+	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -313,6 +346,26 @@ func (uuo *UserUpdateOne) SetToken(s string) *UserUpdateOne {
 // SetTokenSecret sets the "token_secret" field.
 func (uuo *UserUpdateOne) SetTokenSecret(s string) *UserUpdateOne {
 	uuo.mutation.SetTokenSecret(s)
+	return uuo
+}
+
+// SetTwitterProfileImageURL sets the "twitter_profile_image_url" field.
+func (uuo *UserUpdateOne) SetTwitterProfileImageURL(s string) *UserUpdateOne {
+	uuo.mutation.SetTwitterProfileImageURL(s)
+	return uuo
+}
+
+// SetNillableTwitterProfileImageURL sets the "twitter_profile_image_url" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableTwitterProfileImageURL(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetTwitterProfileImageURL(*s)
+	}
+	return uuo
+}
+
+// ClearTwitterProfileImageURL clears the value of the "twitter_profile_image_url" field.
+func (uuo *UserUpdateOne) ClearTwitterProfileImageURL() *UserUpdateOne {
+	uuo.mutation.ClearTwitterProfileImageURL()
 	return uuo
 }
 
@@ -491,6 +544,19 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Type:   field.TypeString,
 			Value:  value,
 			Column: user.FieldTokenSecret,
+		})
+	}
+	if value, ok := uuo.mutation.TwitterProfileImageURL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldTwitterProfileImageURL,
+		})
+	}
+	if uuo.mutation.TwitterProfileImageURLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: user.FieldTwitterProfileImageURL,
 		})
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {

@@ -30,21 +30,22 @@ const (
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *int
-	screen_name        *string
-	twitter_user_id    *int64
-	addtwitter_user_id *int64
-	description        *string
-	token              *string
-	token_secret       *string
-	created_at         *time.Time
-	updated_at         *time.Time
-	clearedFields      map[string]struct{}
-	done               bool
-	oldValue           func(context.Context) (*User, error)
-	predicates         []predicate.User
+	op                        Op
+	typ                       string
+	id                        *int
+	screen_name               *string
+	twitter_user_id           *int64
+	addtwitter_user_id        *int64
+	description               *string
+	token                     *string
+	token_secret              *string
+	twitter_profile_image_url *string
+	created_at                *time.Time
+	updated_at                *time.Time
+	clearedFields             map[string]struct{}
+	done                      bool
+	oldValue                  func(context.Context) (*User, error)
+	predicates                []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -358,6 +359,55 @@ func (m *UserMutation) ResetTokenSecret() {
 	m.token_secret = nil
 }
 
+// SetTwitterProfileImageURL sets the "twitter_profile_image_url" field.
+func (m *UserMutation) SetTwitterProfileImageURL(s string) {
+	m.twitter_profile_image_url = &s
+}
+
+// TwitterProfileImageURL returns the value of the "twitter_profile_image_url" field in the mutation.
+func (m *UserMutation) TwitterProfileImageURL() (r string, exists bool) {
+	v := m.twitter_profile_image_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTwitterProfileImageURL returns the old "twitter_profile_image_url" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldTwitterProfileImageURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTwitterProfileImageURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTwitterProfileImageURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTwitterProfileImageURL: %w", err)
+	}
+	return oldValue.TwitterProfileImageURL, nil
+}
+
+// ClearTwitterProfileImageURL clears the value of the "twitter_profile_image_url" field.
+func (m *UserMutation) ClearTwitterProfileImageURL() {
+	m.twitter_profile_image_url = nil
+	m.clearedFields[user.FieldTwitterProfileImageURL] = struct{}{}
+}
+
+// TwitterProfileImageURLCleared returns if the "twitter_profile_image_url" field was cleared in this mutation.
+func (m *UserMutation) TwitterProfileImageURLCleared() bool {
+	_, ok := m.clearedFields[user.FieldTwitterProfileImageURL]
+	return ok
+}
+
+// ResetTwitterProfileImageURL resets all changes to the "twitter_profile_image_url" field.
+func (m *UserMutation) ResetTwitterProfileImageURL() {
+	m.twitter_profile_image_url = nil
+	delete(m.clearedFields, user.FieldTwitterProfileImageURL)
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *UserMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -449,7 +499,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.screen_name != nil {
 		fields = append(fields, user.FieldScreenName)
 	}
@@ -464,6 +514,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.token_secret != nil {
 		fields = append(fields, user.FieldTokenSecret)
+	}
+	if m.twitter_profile_image_url != nil {
+		fields = append(fields, user.FieldTwitterProfileImageURL)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
@@ -489,6 +542,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Token()
 	case user.FieldTokenSecret:
 		return m.TokenSecret()
+	case user.FieldTwitterProfileImageURL:
+		return m.TwitterProfileImageURL()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	case user.FieldUpdatedAt:
@@ -512,6 +567,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldToken(ctx)
 	case user.FieldTokenSecret:
 		return m.OldTokenSecret(ctx)
+	case user.FieldTwitterProfileImageURL:
+		return m.OldTwitterProfileImageURL(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case user.FieldUpdatedAt:
@@ -559,6 +616,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTokenSecret(v)
+		return nil
+	case user.FieldTwitterProfileImageURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTwitterProfileImageURL(v)
 		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -622,6 +686,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldDescription) {
 		fields = append(fields, user.FieldDescription)
 	}
+	if m.FieldCleared(user.FieldTwitterProfileImageURL) {
+		fields = append(fields, user.FieldTwitterProfileImageURL)
+	}
 	return fields
 }
 
@@ -638,6 +705,9 @@ func (m *UserMutation) ClearField(name string) error {
 	switch name {
 	case user.FieldDescription:
 		m.ClearDescription()
+		return nil
+	case user.FieldTwitterProfileImageURL:
+		m.ClearTwitterProfileImageURL()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -661,6 +731,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldTokenSecret:
 		m.ResetTokenSecret()
+		return nil
+	case user.FieldTwitterProfileImageURL:
+		m.ResetTwitterProfileImageURL()
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()

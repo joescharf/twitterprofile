@@ -17,9 +17,10 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/sync/errgroup"
 
-	twitterlogin "github.com/dghubble/gologin/v2/twitter"
+	"github.com/dghubble/go-twitter/twitter"
+	gologinTwitter "github.com/dghubble/gologin/v2/twitter"
 	"github.com/dghubble/oauth1"
-	twitteroa1 "github.com/dghubble/oauth1/twitter"
+	gologinOauth1 "github.com/dghubble/oauth1/twitter"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -42,25 +43,22 @@ type TP struct {
 }
 type TwitterInfo struct {
 	UserID int64
-	// AccessToken  string
-	// AccessSecret string
-	// ScreenName   string
-	// Description  string
 }
 
 type App struct {
-	Tp           *TP
-	Server       *http.Server
-	Store        *sessions.CookieStore
-	Oauth2Config *oauth2.Config
-	Oauth1Config *oauth1.Config
-	CodeVerifier string
-	Token        *oauth2.Token
-	HttpClient1  *http.Client
-	SessionKey   string
-	DB           *ent.Client
-	Logger       *zap.SugaredLogger
-	Env          string
+	Tp            *TP
+	Server        *http.Server
+	Store         *sessions.CookieStore
+	Oauth2Config  *oauth2.Config
+	Oauth1Config  *oauth1.Config
+	CodeVerifier  string
+	Token         *oauth2.Token
+	HttpClient1   *http.Client
+	TwitterClient *twitter.Client
+	SessionKey    string
+	DB            *ent.Client
+	Logger        *zap.SugaredLogger
+	Env           string
 }
 
 var app *App
@@ -94,7 +92,7 @@ func main() {
 		ConsumerKey:    app.Tp.APIKey,
 		ConsumerSecret: app.Tp.APISecret,
 		CallbackURL:    "http://localhost:3000/auth/callback",
-		Endpoint:       twitteroa1.AuthorizeEndpoint,
+		Endpoint:       gologinOauth1.AuthorizeEndpoint,
 	}
 	// Logger
 	var logger *zap.Logger
@@ -141,8 +139,8 @@ func main() {
 		r.Get("/", indexHandler)
 
 		// https://github.com/dghubble/gologin#twitter-oauth1
-		r.Get("/login", twitterlogin.LoginHandler(app.Oauth1Config, nil).ServeHTTP)
-		r.Get("/auth/callback", twitterlogin.CallbackHandler(app.Oauth1Config, http.HandlerFunc(loginSuccessHandler), nil).ServeHTTP)
+		r.Get("/login", gologinTwitter.LoginHandler(app.Oauth1Config, nil).ServeHTTP)
+		r.Get("/auth/callback", gologinTwitter.CallbackHandler(app.Oauth1Config, http.HandlerFunc(loginSuccessHandler), nil).ServeHTTP)
 
 		r.Get("/hc", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("OK"))

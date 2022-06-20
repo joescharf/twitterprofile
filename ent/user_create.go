@@ -60,6 +60,20 @@ func (uc *UserCreate) SetTokenSecret(s string) *UserCreate {
 	return uc
 }
 
+// SetTwitterProfileImageURL sets the "twitter_profile_image_url" field.
+func (uc *UserCreate) SetTwitterProfileImageURL(s string) *UserCreate {
+	uc.mutation.SetTwitterProfileImageURL(s)
+	return uc
+}
+
+// SetNillableTwitterProfileImageURL sets the "twitter_profile_image_url" field if the given value is not nil.
+func (uc *UserCreate) SetNillableTwitterProfileImageURL(s *string) *UserCreate {
+	if s != nil {
+		uc.SetTwitterProfileImageURL(*s)
+	}
+	return uc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 	uc.mutation.SetCreatedAt(t)
@@ -257,6 +271,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		})
 		_node.TokenSecret = value
 	}
+	if value, ok := uc.mutation.TwitterProfileImageURL(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldTwitterProfileImageURL,
+		})
+		_node.TwitterProfileImageURL = value
+	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -396,6 +418,24 @@ func (u *UserUpsert) SetTokenSecret(v string) *UserUpsert {
 // UpdateTokenSecret sets the "token_secret" field to the value that was provided on create.
 func (u *UserUpsert) UpdateTokenSecret() *UserUpsert {
 	u.SetExcluded(user.FieldTokenSecret)
+	return u
+}
+
+// SetTwitterProfileImageURL sets the "twitter_profile_image_url" field.
+func (u *UserUpsert) SetTwitterProfileImageURL(v string) *UserUpsert {
+	u.Set(user.FieldTwitterProfileImageURL, v)
+	return u
+}
+
+// UpdateTwitterProfileImageURL sets the "twitter_profile_image_url" field to the value that was provided on create.
+func (u *UserUpsert) UpdateTwitterProfileImageURL() *UserUpsert {
+	u.SetExcluded(user.FieldTwitterProfileImageURL)
+	return u
+}
+
+// ClearTwitterProfileImageURL clears the value of the "twitter_profile_image_url" field.
+func (u *UserUpsert) ClearTwitterProfileImageURL() *UserUpsert {
+	u.SetNull(user.FieldTwitterProfileImageURL)
 	return u
 }
 
@@ -546,6 +586,27 @@ func (u *UserUpsertOne) SetTokenSecret(v string) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateTokenSecret() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateTokenSecret()
+	})
+}
+
+// SetTwitterProfileImageURL sets the "twitter_profile_image_url" field.
+func (u *UserUpsertOne) SetTwitterProfileImageURL(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetTwitterProfileImageURL(v)
+	})
+}
+
+// UpdateTwitterProfileImageURL sets the "twitter_profile_image_url" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateTwitterProfileImageURL() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateTwitterProfileImageURL()
+	})
+}
+
+// ClearTwitterProfileImageURL clears the value of the "twitter_profile_image_url" field.
+func (u *UserUpsertOne) ClearTwitterProfileImageURL() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearTwitterProfileImageURL()
 	})
 }
 
@@ -862,6 +923,27 @@ func (u *UserUpsertBulk) SetTokenSecret(v string) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateTokenSecret() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateTokenSecret()
+	})
+}
+
+// SetTwitterProfileImageURL sets the "twitter_profile_image_url" field.
+func (u *UserUpsertBulk) SetTwitterProfileImageURL(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetTwitterProfileImageURL(v)
+	})
+}
+
+// UpdateTwitterProfileImageURL sets the "twitter_profile_image_url" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateTwitterProfileImageURL() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateTwitterProfileImageURL()
+	})
+}
+
+// ClearTwitterProfileImageURL clears the value of the "twitter_profile_image_url" field.
+func (u *UserUpsertBulk) ClearTwitterProfileImageURL() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearTwitterProfileImageURL()
 	})
 }
 

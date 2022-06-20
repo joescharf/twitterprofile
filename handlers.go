@@ -8,8 +8,10 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
-	oauth1login "github.com/dghubble/gologin/v2/oauth1"
-	twitterlogin "github.com/dghubble/gologin/v2/twitter"
+	"github.com/dghubble/go-twitter/twitter"
+	gologinOauth1 "github.com/dghubble/gologin/v2/oauth1"
+	gologinTwitter "github.com/dghubble/gologin/v2/twitter"
+	"github.com/dghubble/oauth1"
 	"github.com/gorilla/sessions"
 	"github.com/joescharf/twitterprofile/v2/ent"
 	"github.com/joescharf/twitterprofile/v2/ent/user"
@@ -48,6 +50,7 @@ func GetFlashMiddleware(next http.Handler) http.Handler {
 // GetCookieMiddleware - see https://go-chi.io/#/pages/middleware
 func GetCookieMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		// Get the session from the request
 		session, err := app.Store.Get(r, "twitterprofile")
 		if err != nil {
@@ -72,11 +75,22 @@ func GetCookieMiddleware(next http.Handler) http.Handler {
 			FlashError(w, r, session, "Error", "Error getting user from database", "/", http.StatusInternalServerError)
 			return
 		}
-		spew.Dump("DB USER:", user)
+
+		// Set the APP HttpClient and TwitterClient if not already set
+		if app.HttpClient1 == nil {
+			accessToken, accessSecret, _ := gologinOauth1.AccessTokenFromContext(ctx)
+			token := oauth1.NewToken(accessToken, accessSecret)
+			// Save the auth'd httpClient to app struct:
+			app.HttpClient1 = app.Oauth1Config.Client(oauth1.NoContext, token)
+			app.TwitterClient = twitter.NewClient(app.HttpClient1)
+		}
+
+		// Set the template layout parameters:
+		templates.SetLayoutParams(templates.LayoutParams{ProfileImageURL: user.TwitterProfileImageURL})
 
 		// Set the request contexts:
 		// ctx := context.WithValue(r.Context(), "twitterInfo", twitterInfo)
-		ctx := context.WithValue(r.Context(), "user", user)
+		ctx = context.WithValue(ctx, "user", user)
 
 		// call the next handler in the chain, passing the response writer and
 		// the updated request object with the new context value.
@@ -105,26 +119,29 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func loginSuccessHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	session, _ := app.Store.Get(r, "twitterprofile")
 
-	// Get authentication information
-	accessToken, accessSecret, _ := oauth1login.AccessTokenFromContext(ctx)
-	twitterUser, err := twitterlogin.UserFromContext(ctx)
+	// Get authentication information and create
+	// Twitter client from the oauth1.Config
+	// https://github.com/dghubble/go-twitter/blob/master/examples/direct_messages.go
+	accessToken, accessSecret, _ := gologinOauth1.AccessTokenFromContext(ctx)
+	token := oauth1.NewToken(accessToken, accessSecret)
+	// Save the auth'd httpClient to app struct:
+	app.HttpClient1 = app.Oauth1Config.Client(oauth1.NoContext, token)
+	app.TwitterClient = twitter.NewClient(app.HttpClient1)
+
+	// Get User info from context
+	twitterUser, err := gologinTwitter.UserFromContext(ctx)
 	if err != nil {
-		w.WriteHeader(422)
-		w.Write([]byte(fmt.Sprintf("error logging in : %v", err)))
+		FlashError(w, r, session, "Error", "Error Logging In", "/", http.StatusSeeOther)
 	}
 
 	// Create twitterInfo struct:
 	twitterInfo := &TwitterInfo{
 		UserID: twitterUser.ID,
-		// AccessToken:  accessToken,
-		// AccessSecret: accessSecret,
-		// ScreenName:   twitterUser.ScreenName,
-		// Description:  twitterUser.Description,
 	}
 
 	// SAVE SESSION
-	session, _ := app.Store.Get(r, "twitterprofile")
 	session.Values["twitterInfo"] = twitterInfo
 	err = session.Save(r, w)
 	if err != nil {
@@ -139,6 +156,7 @@ func loginSuccessHandler(w http.ResponseWriter, r *http.Request) {
 		SetDescription(twitterUser.Description).
 		SetToken(accessToken).
 		SetTokenSecret(accessSecret).
+		SetTwitterProfileImageURL(twitterUser.ProfileImageURLHttps).
 		SetUpdatedAt(time.Now()).
 		OnConflictColumns("twitter_user_id").
 		UpdateNewValues().
@@ -148,13 +166,43 @@ func loginSuccessHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Set the template layout parameters:
+	templates.SetLayoutParams(templates.LayoutParams{ProfileImageURL: twitterUser.ProfileImageURLHttps})
+
 	http.Redirect(w, r, "/profile", http.StatusFound)
 }
 
 func getProfileHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	session, err := app.Store.Get(r, "twitterprofile")
+
+	// Check we have a valid TwitterClient
+	if app.TwitterClient == nil {
+		FlashError(w, r, session, "Error", "Could not find your Twitter session, Please Login", "/", http.StatusSeeOther)
+	}
 
 	// Get user from context
 	user := r.Context().Value("user").(*ent.User)
+
+	// Get latest description from twitter
+	twUser, _, err := app.TwitterClient.Users.Show(&twitter.UserShowParams{
+		ScreenName: user.ScreenName,
+	})
+	if err != nil {
+		FlashError(w, r, session, "Error", "Error getting user from twitter", "/", http.StatusSeeOther)
+	}
+	spew.Dump(twUser.ProfileImageURLHttps)
+
+	// Update user description in DB
+	user, err = user.Update().
+		SetDescription(twUser.Description).
+		SetUpdatedAt(time.Now()).
+		Save(ctx)
+	if err != nil {
+		FlashError(w, r, session, "Error", "Error updating user in DB", "/", http.StatusSeeOther)
+	}
+
+	templates.SetLayoutParams(templates.LayoutParams{ProfileImageURL: twUser.ProfileImageURLHttps})
 
 	p := templates.ProfileParams{
 		ScreenName:  user.ScreenName,
