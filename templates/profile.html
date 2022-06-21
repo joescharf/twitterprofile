@@ -1,17 +1,18 @@
 {{ define "content" }}
+<div class="py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
   <div class="pb-5 border-b border-gray-200">
-    <h3 class="text-lg font-medium leading-6 text-gray-900">
-      Current Profile for
-      @{{ .ScreenName }}
-    </h3>
-    <p class="max-w-4xl mt-2 text-sm text-gray-500">{{ .Description }}</p>
+    <h3 class="text-lg font-medium leading-6 text-gray-900"> Twitter Profile for @{{ .ScreenName }}</h3>
+    <dl class="grid grid-cols-1 gap-5 mt-5 sm:grid-cols-2">
+      <div class="px-4 py-5 overflow-hidden bg-white rounded-lg shadow sm:p-6">
+        <dt class="font-medium text-gray-500 truncate text-md">Current Profile</dt>
+        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ .Description }}</dd>
+      </div>
+      
+      <div class="px-4 py-5 overflow-hidden bg-white rounded-lg shadow sm:p-6">
+        <dt class="font-medium text-gray-500 truncate text-md">New Profile</dt>
+        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ .Description }}</dd>
+      </div>    
+    </div>
   </div>
-  <div>
-    <h1 x-data="{ message: 'I ❤️ Alpine' }" x-text="message"></h1>
-  </div>
-  <div x-data="{ count: 0 }">
-    <button x-on:click="count++">Increment</button>
-
-    <span x-text="count"></span>
-  </div>
+    
 {{ end }}
