@@ -13,6 +13,11 @@ type Flash struct {
 	Title   string
 	Message string
 }
+type StripeAccount struct {
+	Name   string
+	MRR    float32
+	Status string
+}
 
 var (
 	layout       = parse("layout.html")
@@ -41,12 +46,31 @@ func Home(w io.Writer, p HomeParams) error {
 
 type ProfileParams struct {
 	LayoutParams
-	ScreenName  string
-	Description string
+	ScreenName     string
+	Description    string
+	StripeAccounts []*StripeAccount
 }
 
 func Profile(w io.Writer, p ProfileParams) error {
 	p.LayoutParams = layoutParams
+
+	// TODO: Add fabricated stripe accounts for now
+	stripeAccounts := []*StripeAccount{}
+	stripeAccount1 := &StripeAccount{
+		Name:   "Widget Co",
+		MRR:    100.0,
+		Status: "Active",
+	}
+	stripeAccounts = append(stripeAccounts, stripeAccount1)
+	stripeAccount2 := &StripeAccount{
+		Name:   "NewCo",
+		MRR:    10000.0,
+		Status: "Active",
+	}
+	stripeAccounts = append(stripeAccounts, stripeAccount2)
+
+	p.StripeAccounts = stripeAccounts
+
 	return profile.Execute(w, p)
 }
 

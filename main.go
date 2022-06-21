@@ -14,10 +14,8 @@ import (
 
 	"entgo.io/ent/dialect/sql/schema"
 	"go.uber.org/zap"
-	"golang.org/x/oauth2"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/dghubble/go-twitter/twitter"
 	gologinTwitter "github.com/dghubble/gologin/v2/twitter"
 	"github.com/dghubble/oauth1"
 	gologinOauth1 "github.com/dghubble/oauth1/twitter"
@@ -33,33 +31,6 @@ import (
 
 	_ "github.com/lib/pq"
 )
-
-type TP struct {
-	APIKey       string
-	APISecret    string
-	AccessToken  string
-	AccessSecret string
-	ClientID     string
-}
-type TwitterInfo struct {
-	UserID int64
-}
-
-type App struct {
-	Tp            *TP
-	Server        *http.Server
-	Store         *sessions.CookieStore
-	Oauth2Config  *oauth2.Config
-	Oauth1Config  *oauth1.Config
-	CodeVerifier  string
-	Token         *oauth2.Token
-	HttpClient1   *http.Client
-	TwitterClient *twitter.Client
-	SessionKey    string
-	DB            *ent.Client
-	Logger        *zap.SugaredLogger
-	Env           string
-}
 
 var app *App
 
@@ -149,7 +120,7 @@ func main() {
 
 	// Private Routes
 	r.Group(func(r chi.Router) {
-		r.Use(GetCookieMiddleware)
+		r.Use(AuthMiddleware)
 		r.Get("/profile", getProfileHandler)
 		r.Post("/profile", updateProfileHandler)
 	})
