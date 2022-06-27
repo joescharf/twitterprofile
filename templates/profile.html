@@ -48,16 +48,28 @@
     </div>
 
     <!-- METRICS BAR SELECTOR -->
-    <div
-      class="flex items-center justify-center mx-auto mt-10 space-x-5"
-      x-data="{min:0, max:10, bar:5, square: '&#9634;'}"
-    >
-      <div>$<span x-text="min"></span>k</div>
-      <div>
-        <template x-for="i in bar"> <span x-text="square"></span> </template>
+    <div x-data="{sq:{green: '🟩', yellow: '🟨', gray: '⬜'}}">
+      <div
+        class="flex items-center justify-center mx-auto mt-10 space-x-2"
+        x-data="{min:0, max:10, bar_g:2, bar_y:1, bar_t:2, square: '&#9634;'}"
+      >
+        <div>0</div>
+
+        <div class="flex space-x-0.5">
+          <template x-for="i in bar_g">
+            <span x-text="sq.green"></span>
+          </template>
+          <template x-for="i in bar_y">
+            <span x-text="sq.yellow"></span>
+          </template>
+          <template x-for="i in bar_t">
+            <span x-text="sq.gray"></span>
+          </template>
+        </div>
+        <div>$<span x-text="max"></span>K</div>
       </div>
-      <div>$<span x-text="max"></span>k</div>
     </div>
+
     <!-- BAR TWO -->
     <div
       class="flex items-center justify-center mx-auto mt-10 space-x-5"
