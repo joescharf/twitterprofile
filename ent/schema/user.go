@@ -1,4 +1,6 @@
 //ent generate --feature sql/upsert ./ent/schema
+// The above feature flag has been added to ent/generate.go
+// and you can now use go generate ./...
 package schema
 
 import (
