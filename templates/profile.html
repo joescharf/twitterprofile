@@ -70,63 +70,6 @@
       </div>
     </div>
 
-    <!-- BAR TWO -->
-    <div
-      class="flex items-center justify-center mx-auto mt-10 space-x-5"
-      x-data="{min:0, max:10, bar_g:2, bar_y:1, bar_t:2, square: '&#9634;'}"
-    >
-      <div>$<span x-text="min"></span>k</div>
-      <!-- MAIN BAR DIV -->
-      <div class="flex">
-        <!-- GREEN -->
-        <div class="flex space-x-1">
-          <template x-for="i in bar_g">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6"
-              viewBox="0 0 36 36"
-            >
-              <path
-                fill="#78B159"
-                d="M36 32c0 2.209-1.791 4-4 4H4c-2.209 0-4-1.791-4-4V4c0-2.209 1.791-4 4-4h28c2.209 0 4 1.791 4 4v28z"
-              />
-            </svg>
-          </template>
-        </div>
-        <!-- YELLOW -->
-        <div class="flex space-x-1">
-          <template x-for="i in bar_y">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6"
-              viewBox="0 0 36 36"
-            >
-              <path
-                fill="#FDCB58"
-                d="M36 32c0 2.209-1.791 4-4 4H4c-2.209 0-4-1.791-4-4V4c0-2.209 1.791-4 4-4h28c2.209 0 4 1.791 4 4v28z"
-              />
-            </svg>
-          </template>
-        </div>
-        <!-- TRANSPARENT -->
-        <div class="flex space-x-1">
-          <template x-for="i in bar_y">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6"
-              viewBox="0 0 36 36"
-            >
-              <path
-                fill="#E6E7E8"
-                d="M36 32c0 2.209-1.791 4-4 4H4c-2.209 0-4-1.791-4-4V4c0-2.209 1.791-4 4-4h28c2.209 0 4 1.791 4 4v28z"
-              />
-            </svg>
-          </template>
-        </div>
-        <!-- END BAR DIV -->
-      </div>
-      <div>$<span x-text="max"></span>k</div>
-    </div>
     <!-- Add Stripe Account -->
     <div class="mt-8">
       <div class="mb-4 sm:flex sm:items-center">
