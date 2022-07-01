@@ -23,12 +23,25 @@ const (
 	FieldTokenSecret = "token_secret"
 	// FieldTwitterProfileImageURL holds the string denoting the twitter_profile_image_url field in the database.
 	FieldTwitterProfileImageURL = "twitter_profile_image_url"
+	// FieldMin holds the string denoting the min field in the database.
+	FieldMin = "min"
+	// FieldMax holds the string denoting the max field in the database.
+	FieldMax = "max"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// EdgeAccounts holds the string denoting the accounts edge name in mutations.
+	EdgeAccounts = "accounts"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// AccountsTable is the table that holds the accounts relation/edge.
+	AccountsTable = "stripes"
+	// AccountsInverseTable is the table name for the Stripe entity.
+	// It exists in this package in order to avoid circular dependency with the "stripe" package.
+	AccountsInverseTable = "stripes"
+	// AccountsColumn is the table column denoting the accounts relation/edge.
+	AccountsColumn = "user_accounts"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -40,6 +53,8 @@ var Columns = []string{
 	FieldToken,
 	FieldTokenSecret,
 	FieldTwitterProfileImageURL,
+	FieldMin,
+	FieldMax,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }

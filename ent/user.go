@@ -28,10 +28,35 @@ type User struct {
 	TokenSecret string `json:"token_secret,omitempty"`
 	// TwitterProfileImageURL holds the value of the "twitter_profile_image_url" field.
 	TwitterProfileImageURL string `json:"twitter_profile_image_url,omitempty"`
+	// Min holds the value of the "min" field.
+	Min int32 `json:"min,omitempty"`
+	// Max holds the value of the "max" field.
+	Max int32 `json:"max,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges UserEdges `json:"edges"`
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Accounts holds the value of the accounts edge.
+	Accounts []*Stripe `json:"accounts,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// AccountsOrErr returns the Accounts value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AccountsOrErr() ([]*Stripe, error) {
+	if e.loadedTypes[0] {
+		return e.Accounts, nil
+	}
+	return nil, &NotLoadedError{edge: "accounts"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -39,7 +64,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldID, user.FieldTwitterUserID:
+		case user.FieldID, user.FieldTwitterUserID, user.FieldMin, user.FieldMax:
 			values[i] = new(sql.NullInt64)
 		case user.FieldScreenName, user.FieldDescription, user.FieldToken, user.FieldTokenSecret, user.FieldTwitterProfileImageURL:
 			values[i] = new(sql.NullString)
@@ -102,6 +127,18 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				u.TwitterProfileImageURL = value.String
 			}
+		case user.FieldMin:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field min", values[i])
+			} else if value.Valid {
+				u.Min = int32(value.Int64)
+			}
+		case user.FieldMax:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field max", values[i])
+			} else if value.Valid {
+				u.Max = int32(value.Int64)
+			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -117,6 +154,11 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 		}
 	}
 	return nil
+}
+
+// QueryAccounts queries the "accounts" edge of the User entity.
+func (u *User) QueryAccounts() *StripeQuery {
+	return (&UserClient{config: u.config}).QueryAccounts(u)
 }
 
 // Update returns a builder for updating this User.
@@ -154,6 +196,10 @@ func (u *User) String() string {
 	builder.WriteString(u.TokenSecret)
 	builder.WriteString(", twitter_profile_image_url=")
 	builder.WriteString(u.TwitterProfileImageURL)
+	builder.WriteString(", min=")
+	builder.WriteString(fmt.Sprintf("%v", u.Min))
+	builder.WriteString(", max=")
+	builder.WriteString(fmt.Sprintf("%v", u.Max))
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")

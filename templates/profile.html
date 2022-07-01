@@ -1,10 +1,19 @@
 {{ define "content" }}
-  <div class="py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+  <div
+    class="py-6 mx-auto max-w-7xl sm:px-6 lg:px-8"
+    x-data="{
+      authToken: '{{ .UserInfo.TokenSecret }}',
+      min: '{{ .Min }}',
+      max: '{{ .Max }}',
+  }"
+  >
     <!-- Twitter Profile Heading Boxes -->
     <div>
       <h3 class="text-xl font-medium leading-6 text-gray-900">
         Twitter Profile for
         @{{ .ScreenName }}
+        {{ .Min }} -
+        {{ .Max }}
       </h3>
       <dl class="flex items-center justify-center space-x-4">
         <div
@@ -51,9 +60,20 @@
     <div x-data="{sq:{green: '🟩', yellow: '🟨', gray: '⬜'}}">
       <div
         class="flex items-center justify-center mx-auto mt-10 space-x-2"
-        x-data="{min:0, max:10, bar_g:2, bar_y:1, bar_t:2, square: '&#9634;'}"
+        x-data="{ bar_g:2, bar_y:1, bar_t:2, square: '&#9634;'}"
       >
-        <div>0</div>
+        <div>
+          <label for="min" class="sr-only">Min</label>
+          <input
+            type="min"
+            name="min"
+            id="min"
+            class="block w-10 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            placeholder="min"
+            :value="min"
+            x-model="min"
+          />
+        </div>
 
         <div class="flex space-x-0.5">
           <template x-for="i in bar_g">
@@ -66,7 +86,49 @@
             <span x-text="sq.gray"></span>
           </template>
         </div>
-        <div>$<span x-text="max"></span>K</div>
+        <div>$</div>
+        <div>
+          <label for="min" class="sr-only">Min</label>
+          <input
+            type="min"
+            name="min"
+            id="min"
+            class="block w-20 text-right border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            placeholder="max"
+            :value="max"
+            x-model="max"
+          />
+        </div>
+        <div
+          x-data="{
+          async updateMetrics() { 
+            this.res = await (
+              await fetch(
+                `http://localhost:3000/api/v1/profile`,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' +  authToken,
+                  },
+                  body: JSON.stringify({
+                    min: this.min,
+                    max: this.max,
+                  }),
+                }
+              )
+            ).json()
+          }
+        }"
+        >
+          <button
+            type="button"
+            class="inline-flex ml-2 items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            @click="updateMetrics"
+          >
+            Update
+          </button>
+        </div>
       </div>
     </div>
 

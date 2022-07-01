@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/joescharf/twitterprofile/v2/ent/stripe"
 	"github.com/joescharf/twitterprofile/v2/ent/user"
 )
 
@@ -74,6 +75,34 @@ func (uc *UserCreate) SetNillableTwitterProfileImageURL(s *string) *UserCreate {
 	return uc
 }
 
+// SetMin sets the "min" field.
+func (uc *UserCreate) SetMin(i int32) *UserCreate {
+	uc.mutation.SetMin(i)
+	return uc
+}
+
+// SetNillableMin sets the "min" field if the given value is not nil.
+func (uc *UserCreate) SetNillableMin(i *int32) *UserCreate {
+	if i != nil {
+		uc.SetMin(*i)
+	}
+	return uc
+}
+
+// SetMax sets the "max" field.
+func (uc *UserCreate) SetMax(i int32) *UserCreate {
+	uc.mutation.SetMax(i)
+	return uc
+}
+
+// SetNillableMax sets the "max" field if the given value is not nil.
+func (uc *UserCreate) SetNillableMax(i *int32) *UserCreate {
+	if i != nil {
+		uc.SetMax(*i)
+	}
+	return uc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 	uc.mutation.SetCreatedAt(t)
@@ -100,6 +129,21 @@ func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
 		uc.SetUpdatedAt(*t)
 	}
 	return uc
+}
+
+// AddAccountIDs adds the "accounts" edge to the Stripe entity by IDs.
+func (uc *UserCreate) AddAccountIDs(ids ...int) *UserCreate {
+	uc.mutation.AddAccountIDs(ids...)
+	return uc
+}
+
+// AddAccounts adds the "accounts" edges to the Stripe entity.
+func (uc *UserCreate) AddAccounts(s ...*Stripe) *UserCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uc.AddAccountIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -279,6 +323,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		})
 		_node.TwitterProfileImageURL = value
 	}
+	if value, ok := uc.mutation.Min(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Value:  value,
+			Column: user.FieldMin,
+		})
+		_node.Min = value
+	}
+	if value, ok := uc.mutation.Max(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Value:  value,
+			Column: user.FieldMax,
+		})
+		_node.Max = value
+	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -294,6 +354,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldUpdatedAt,
 		})
 		_node.UpdatedAt = value
+	}
+	if nodes := uc.mutation.AccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AccountsTable,
+			Columns: []string{user.AccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: stripe.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -436,6 +515,54 @@ func (u *UserUpsert) UpdateTwitterProfileImageURL() *UserUpsert {
 // ClearTwitterProfileImageURL clears the value of the "twitter_profile_image_url" field.
 func (u *UserUpsert) ClearTwitterProfileImageURL() *UserUpsert {
 	u.SetNull(user.FieldTwitterProfileImageURL)
+	return u
+}
+
+// SetMin sets the "min" field.
+func (u *UserUpsert) SetMin(v int32) *UserUpsert {
+	u.Set(user.FieldMin, v)
+	return u
+}
+
+// UpdateMin sets the "min" field to the value that was provided on create.
+func (u *UserUpsert) UpdateMin() *UserUpsert {
+	u.SetExcluded(user.FieldMin)
+	return u
+}
+
+// AddMin adds v to the "min" field.
+func (u *UserUpsert) AddMin(v int32) *UserUpsert {
+	u.Add(user.FieldMin, v)
+	return u
+}
+
+// ClearMin clears the value of the "min" field.
+func (u *UserUpsert) ClearMin() *UserUpsert {
+	u.SetNull(user.FieldMin)
+	return u
+}
+
+// SetMax sets the "max" field.
+func (u *UserUpsert) SetMax(v int32) *UserUpsert {
+	u.Set(user.FieldMax, v)
+	return u
+}
+
+// UpdateMax sets the "max" field to the value that was provided on create.
+func (u *UserUpsert) UpdateMax() *UserUpsert {
+	u.SetExcluded(user.FieldMax)
+	return u
+}
+
+// AddMax adds v to the "max" field.
+func (u *UserUpsert) AddMax(v int32) *UserUpsert {
+	u.Add(user.FieldMax, v)
+	return u
+}
+
+// ClearMax clears the value of the "max" field.
+func (u *UserUpsert) ClearMax() *UserUpsert {
+	u.SetNull(user.FieldMax)
 	return u
 }
 
@@ -607,6 +734,62 @@ func (u *UserUpsertOne) UpdateTwitterProfileImageURL() *UserUpsertOne {
 func (u *UserUpsertOne) ClearTwitterProfileImageURL() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearTwitterProfileImageURL()
+	})
+}
+
+// SetMin sets the "min" field.
+func (u *UserUpsertOne) SetMin(v int32) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMin(v)
+	})
+}
+
+// AddMin adds v to the "min" field.
+func (u *UserUpsertOne) AddMin(v int32) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.AddMin(v)
+	})
+}
+
+// UpdateMin sets the "min" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateMin() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMin()
+	})
+}
+
+// ClearMin clears the value of the "min" field.
+func (u *UserUpsertOne) ClearMin() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearMin()
+	})
+}
+
+// SetMax sets the "max" field.
+func (u *UserUpsertOne) SetMax(v int32) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMax(v)
+	})
+}
+
+// AddMax adds v to the "max" field.
+func (u *UserUpsertOne) AddMax(v int32) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.AddMax(v)
+	})
+}
+
+// UpdateMax sets the "max" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateMax() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMax()
+	})
+}
+
+// ClearMax clears the value of the "max" field.
+func (u *UserUpsertOne) ClearMax() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearMax()
 	})
 }
 
@@ -944,6 +1127,62 @@ func (u *UserUpsertBulk) UpdateTwitterProfileImageURL() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearTwitterProfileImageURL() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearTwitterProfileImageURL()
+	})
+}
+
+// SetMin sets the "min" field.
+func (u *UserUpsertBulk) SetMin(v int32) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMin(v)
+	})
+}
+
+// AddMin adds v to the "min" field.
+func (u *UserUpsertBulk) AddMin(v int32) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.AddMin(v)
+	})
+}
+
+// UpdateMin sets the "min" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateMin() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMin()
+	})
+}
+
+// ClearMin clears the value of the "min" field.
+func (u *UserUpsertBulk) ClearMin() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearMin()
+	})
+}
+
+// SetMax sets the "max" field.
+func (u *UserUpsertBulk) SetMax(v int32) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMax(v)
+	})
+}
+
+// AddMax adds v to the "max" field.
+func (u *UserUpsertBulk) AddMax(v int32) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.AddMax(v)
+	})
+}
+
+// UpdateMax sets the "max" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateMax() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMax()
+	})
+}
+
+// ClearMax clears the value of the "max" field.
+func (u *UserUpsertBulk) ClearMax() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearMax()
 	})
 }
 

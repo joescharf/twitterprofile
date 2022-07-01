@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/joescharf/twitterprofile/v2/ent/predicate"
 )
 
@@ -131,6 +132,20 @@ func TokenSecret(v string) predicate.User {
 func TwitterProfileImageURL(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTwitterProfileImageURL), v))
+	})
+}
+
+// Min applies equality check predicate on the "min" field. It's identical to MinEQ.
+func Min(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMin), v))
+	})
+}
+
+// Max applies equality check predicate on the "max" field. It's identical to MaxEQ.
+func Max(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMax), v))
 	})
 }
 
@@ -807,6 +822,186 @@ func TwitterProfileImageURLContainsFold(v string) predicate.User {
 	})
 }
 
+// MinEQ applies the EQ predicate on the "min" field.
+func MinEQ(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMin), v))
+	})
+}
+
+// MinNEQ applies the NEQ predicate on the "min" field.
+func MinNEQ(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMin), v))
+	})
+}
+
+// MinIn applies the In predicate on the "min" field.
+func MinIn(vs ...int32) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldMin), v...))
+	})
+}
+
+// MinNotIn applies the NotIn predicate on the "min" field.
+func MinNotIn(vs ...int32) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldMin), v...))
+	})
+}
+
+// MinGT applies the GT predicate on the "min" field.
+func MinGT(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMin), v))
+	})
+}
+
+// MinGTE applies the GTE predicate on the "min" field.
+func MinGTE(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMin), v))
+	})
+}
+
+// MinLT applies the LT predicate on the "min" field.
+func MinLT(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMin), v))
+	})
+}
+
+// MinLTE applies the LTE predicate on the "min" field.
+func MinLTE(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMin), v))
+	})
+}
+
+// MinIsNil applies the IsNil predicate on the "min" field.
+func MinIsNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMin)))
+	})
+}
+
+// MinNotNil applies the NotNil predicate on the "min" field.
+func MinNotNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMin)))
+	})
+}
+
+// MaxEQ applies the EQ predicate on the "max" field.
+func MaxEQ(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMax), v))
+	})
+}
+
+// MaxNEQ applies the NEQ predicate on the "max" field.
+func MaxNEQ(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMax), v))
+	})
+}
+
+// MaxIn applies the In predicate on the "max" field.
+func MaxIn(vs ...int32) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldMax), v...))
+	})
+}
+
+// MaxNotIn applies the NotIn predicate on the "max" field.
+func MaxNotIn(vs ...int32) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldMax), v...))
+	})
+}
+
+// MaxGT applies the GT predicate on the "max" field.
+func MaxGT(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMax), v))
+	})
+}
+
+// MaxGTE applies the GTE predicate on the "max" field.
+func MaxGTE(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMax), v))
+	})
+}
+
+// MaxLT applies the LT predicate on the "max" field.
+func MaxLT(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMax), v))
+	})
+}
+
+// MaxLTE applies the LTE predicate on the "max" field.
+func MaxLTE(v int32) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMax), v))
+	})
+}
+
+// MaxIsNil applies the IsNil predicate on the "max" field.
+func MaxIsNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMax)))
+	})
+}
+
+// MaxNotNil applies the NotNil predicate on the "max" field.
+func MaxNotNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMax)))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -956,6 +1151,34 @@ func UpdatedAtLT(v time.Time) predicate.User {
 func UpdatedAtLTE(v time.Time) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldUpdatedAt), v))
+	})
+}
+
+// HasAccounts applies the HasEdge predicate on the "accounts" edge.
+func HasAccounts() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(AccountsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AccountsTable, AccountsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAccountsWith applies the HasEdge predicate on the "accounts" edge with a given conditions (other predicates).
+func HasAccountsWith(preds ...predicate.Stripe) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(AccountsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AccountsTable, AccountsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

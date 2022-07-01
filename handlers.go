@@ -135,6 +135,12 @@ func getProfileHandler(w http.ResponseWriter, r *http.Request) {
 	templates.SetLayoutParams(templates.LayoutParams{ProfileImageURL: twUser.ProfileImageURLHttps})
 
 	p := templates.ProfileParams{
+		UserInfo: templates.UserInfo{
+			ID:          user.ID,
+			TokenSecret: user.TokenSecret,
+		},
+		Min:         user.Min,
+		Max:         user.Max,
 		ScreenName:  user.ScreenName,
 		Description: user.Description,
 	}
@@ -153,6 +159,18 @@ func updateProfileHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("error updating profile: %v", err)))
 	}
 	w.Write([]byte(fmt.Sprintf("Profile Updated Successfully")))
+}
+
+// updateAPIProfileHandler updates the twitter profile
+func updateAPIProfileHandler(w http.ResponseWriter, r *http.Request) {
+	// Get user from context
+	user := r.Context().Value("user").(*ent.User)
+
+	// Get min and max from body
+	min := r.Context().Value("min")
+	max := r.Context().Value("max")
+
+	w.Write([]byte(fmt.Sprintf("User ID: %d, Min: %s, Max: %s", user.ID, min, max)))
 }
 
 // FileServer conveniently sets up a http.FileServer handler to serve

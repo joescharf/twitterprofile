@@ -1,4 +1,4 @@
-//ent generate --feature sql/upsert ./ent/schema
+// ent generate --feature sql/upsert ./ent/schema
 // The above feature flag has been added to ent/generate.go
 // and you can now use go generate ./...
 package schema
@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -24,6 +25,8 @@ func (User) Fields() []ent.Field {
 		field.String("token"),
 		field.String("token_secret"),
 		field.String("twitter_profile_image_url").Optional(),
+		field.Int32("min").Optional(),
+		field.Int32("max").Optional(),
 		field.Time("created_at").
 			Default(time.Now),
 		field.Time("updated_at").
@@ -33,5 +36,7 @@ func (User) Fields() []ent.Field {
 
 // Edges of the User.
 func (User) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("accounts", Stripe.Type),
+	}
 }

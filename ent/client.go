@@ -9,10 +9,12 @@ import (
 
 	"github.com/joescharf/twitterprofile/v2/ent/migrate"
 
+	"github.com/joescharf/twitterprofile/v2/ent/stripe"
 	"github.com/joescharf/twitterprofile/v2/ent/user"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // Client is the client that holds all ent builders.
@@ -20,6 +22,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Stripe is the client for interacting with the Stripe builders.
+	Stripe *StripeClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -35,6 +39,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Stripe = NewStripeClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -69,6 +74,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:    ctx,
 		config: cfg,
+		Stripe: NewStripeClient(cfg),
 		User:   NewUserClient(cfg),
 	}, nil
 }
@@ -89,6 +95,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:    ctx,
 		config: cfg,
+		Stripe: NewStripeClient(cfg),
 		User:   NewUserClient(cfg),
 	}, nil
 }
@@ -96,7 +103,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		User.
+//		Stripe.
 //		Query().
 //		Count(ctx)
 //
@@ -119,7 +126,98 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Stripe.Use(hooks...)
 	c.User.Use(hooks...)
+}
+
+// StripeClient is a client for the Stripe schema.
+type StripeClient struct {
+	config
+}
+
+// NewStripeClient returns a client for the Stripe from the given config.
+func NewStripeClient(c config) *StripeClient {
+	return &StripeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `stripe.Hooks(f(g(h())))`.
+func (c *StripeClient) Use(hooks ...Hook) {
+	c.hooks.Stripe = append(c.hooks.Stripe, hooks...)
+}
+
+// Create returns a create builder for Stripe.
+func (c *StripeClient) Create() *StripeCreate {
+	mutation := newStripeMutation(c.config, OpCreate)
+	return &StripeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Stripe entities.
+func (c *StripeClient) CreateBulk(builders ...*StripeCreate) *StripeCreateBulk {
+	return &StripeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Stripe.
+func (c *StripeClient) Update() *StripeUpdate {
+	mutation := newStripeMutation(c.config, OpUpdate)
+	return &StripeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StripeClient) UpdateOne(s *Stripe) *StripeUpdateOne {
+	mutation := newStripeMutation(c.config, OpUpdateOne, withStripe(s))
+	return &StripeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StripeClient) UpdateOneID(id int) *StripeUpdateOne {
+	mutation := newStripeMutation(c.config, OpUpdateOne, withStripeID(id))
+	return &StripeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Stripe.
+func (c *StripeClient) Delete() *StripeDelete {
+	mutation := newStripeMutation(c.config, OpDelete)
+	return &StripeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *StripeClient) DeleteOne(s *Stripe) *StripeDeleteOne {
+	return c.DeleteOneID(s.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *StripeClient) DeleteOneID(id int) *StripeDeleteOne {
+	builder := c.Delete().Where(stripe.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StripeDeleteOne{builder}
+}
+
+// Query returns a query builder for Stripe.
+func (c *StripeClient) Query() *StripeQuery {
+	return &StripeQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Stripe entity by its id.
+func (c *StripeClient) Get(ctx context.Context, id int) (*Stripe, error) {
+	return c.Query().Where(stripe.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StripeClient) GetX(ctx context.Context, id int) *Stripe {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *StripeClient) Hooks() []Hook {
+	return c.hooks.Stripe
 }
 
 // UserClient is a client for the User schema.
@@ -205,6 +303,22 @@ func (c *UserClient) GetX(ctx context.Context, id int) *User {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryAccounts queries the accounts edge of a User.
+func (c *UserClient) QueryAccounts(u *User) *StripeQuery {
+	query := &StripeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(stripe.Table, stripe.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AccountsTable, user.AccountsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

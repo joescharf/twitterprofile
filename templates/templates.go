@@ -18,6 +18,10 @@ type StripeAccount struct {
 	MRR    float32
 	Status string
 }
+type UserInfo struct {
+	ID          int
+	TokenSecret string
+}
 
 var (
 	layout       = parse("layout.html")
@@ -46,8 +50,11 @@ func Home(w io.Writer, p HomeParams) error {
 
 type ProfileParams struct {
 	LayoutParams
+	UserInfo       UserInfo
 	ScreenName     string
 	Description    string
+	Min            int32
+	Max            int32
 	StripeAccounts []*StripeAccount
 }
 

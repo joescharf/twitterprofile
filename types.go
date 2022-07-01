@@ -11,7 +11,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type TP struct {
+type TwitterAPIConfig struct {
 	APIKey       string
 	APISecret    string
 	AccessToken  string
@@ -23,17 +23,18 @@ type TwitterInfo struct {
 }
 
 type App struct {
-	Tp            *TP
-	Server        *http.Server
-	Store         *sessions.CookieStore
-	Oauth2Config  *oauth2.Config
-	Oauth1Config  *oauth1.Config
-	CodeVerifier  string
-	Token         *oauth2.Token
-	HttpClient1   *http.Client
-	TwitterClient *twitter.Client
-	SessionKey    string
-	DB            *ent.Client
-	Logger        *zap.SugaredLogger
-	Env           string
+	TwitterAPIConfig *TwitterAPIConfig
+	Server           *http.Server
+	Store            *sessions.CookieStore
+	Oauth2Config     *oauth2.Config
+	Oauth1Config     *oauth1.Config
+	CodeVerifier     string
+	Token            *oauth2.Token
+	HttpClient1      *http.Client
+	TwitterClient    *twitter.Client
+	SessionKey       string
+	DBURL            string
+	DB               *ent.Client
+	Logger           *zap.SugaredLogger
+	Env              string
 }

@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/joescharf/twitterprofile/v2/ent/predicate"
+	"github.com/joescharf/twitterprofile/v2/ent/stripe"
 	"github.com/joescharf/twitterprofile/v2/ent/user"
 )
 
@@ -99,6 +100,60 @@ func (uu *UserUpdate) ClearTwitterProfileImageURL() *UserUpdate {
 	return uu
 }
 
+// SetMin sets the "min" field.
+func (uu *UserUpdate) SetMin(i int32) *UserUpdate {
+	uu.mutation.ResetMin()
+	uu.mutation.SetMin(i)
+	return uu
+}
+
+// SetNillableMin sets the "min" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableMin(i *int32) *UserUpdate {
+	if i != nil {
+		uu.SetMin(*i)
+	}
+	return uu
+}
+
+// AddMin adds i to the "min" field.
+func (uu *UserUpdate) AddMin(i int32) *UserUpdate {
+	uu.mutation.AddMin(i)
+	return uu
+}
+
+// ClearMin clears the value of the "min" field.
+func (uu *UserUpdate) ClearMin() *UserUpdate {
+	uu.mutation.ClearMin()
+	return uu
+}
+
+// SetMax sets the "max" field.
+func (uu *UserUpdate) SetMax(i int32) *UserUpdate {
+	uu.mutation.ResetMax()
+	uu.mutation.SetMax(i)
+	return uu
+}
+
+// SetNillableMax sets the "max" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableMax(i *int32) *UserUpdate {
+	if i != nil {
+		uu.SetMax(*i)
+	}
+	return uu
+}
+
+// AddMax adds i to the "max" field.
+func (uu *UserUpdate) AddMax(i int32) *UserUpdate {
+	uu.mutation.AddMax(i)
+	return uu
+}
+
+// ClearMax clears the value of the "max" field.
+func (uu *UserUpdate) ClearMax() *UserUpdate {
+	uu.mutation.ClearMax()
+	return uu
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
 	uu.mutation.SetCreatedAt(t)
@@ -127,9 +182,45 @@ func (uu *UserUpdate) SetNillableUpdatedAt(t *time.Time) *UserUpdate {
 	return uu
 }
 
+// AddAccountIDs adds the "accounts" edge to the Stripe entity by IDs.
+func (uu *UserUpdate) AddAccountIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddAccountIDs(ids...)
+	return uu
+}
+
+// AddAccounts adds the "accounts" edges to the Stripe entity.
+func (uu *UserUpdate) AddAccounts(s ...*Stripe) *UserUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uu.AddAccountIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
+}
+
+// ClearAccounts clears all "accounts" edges to the Stripe entity.
+func (uu *UserUpdate) ClearAccounts() *UserUpdate {
+	uu.mutation.ClearAccounts()
+	return uu
+}
+
+// RemoveAccountIDs removes the "accounts" edge to Stripe entities by IDs.
+func (uu *UserUpdate) RemoveAccountIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveAccountIDs(ids...)
+	return uu
+}
+
+// RemoveAccounts removes "accounts" edges to Stripe entities.
+func (uu *UserUpdate) RemoveAccounts(s ...*Stripe) *UserUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uu.RemoveAccountIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -265,6 +356,46 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldTwitterProfileImageURL,
 		})
 	}
+	if value, ok := uu.mutation.Min(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Value:  value,
+			Column: user.FieldMin,
+		})
+	}
+	if value, ok := uu.mutation.AddedMin(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Value:  value,
+			Column: user.FieldMin,
+		})
+	}
+	if uu.mutation.MinCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Column: user.FieldMin,
+		})
+	}
+	if value, ok := uu.mutation.Max(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Value:  value,
+			Column: user.FieldMax,
+		})
+	}
+	if value, ok := uu.mutation.AddedMax(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Value:  value,
+			Column: user.FieldMax,
+		})
+	}
+	if uu.mutation.MaxCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Column: user.FieldMax,
+		})
+	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -278,6 +409,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Value:  value,
 			Column: user.FieldUpdatedAt,
 		})
+	}
+	if uu.mutation.AccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AccountsTable,
+			Columns: []string{user.AccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: stripe.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAccountsIDs(); len(nodes) > 0 && !uu.mutation.AccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AccountsTable,
+			Columns: []string{user.AccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: stripe.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AccountsTable,
+			Columns: []string{user.AccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: stripe.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -369,6 +554,60 @@ func (uuo *UserUpdateOne) ClearTwitterProfileImageURL() *UserUpdateOne {
 	return uuo
 }
 
+// SetMin sets the "min" field.
+func (uuo *UserUpdateOne) SetMin(i int32) *UserUpdateOne {
+	uuo.mutation.ResetMin()
+	uuo.mutation.SetMin(i)
+	return uuo
+}
+
+// SetNillableMin sets the "min" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableMin(i *int32) *UserUpdateOne {
+	if i != nil {
+		uuo.SetMin(*i)
+	}
+	return uuo
+}
+
+// AddMin adds i to the "min" field.
+func (uuo *UserUpdateOne) AddMin(i int32) *UserUpdateOne {
+	uuo.mutation.AddMin(i)
+	return uuo
+}
+
+// ClearMin clears the value of the "min" field.
+func (uuo *UserUpdateOne) ClearMin() *UserUpdateOne {
+	uuo.mutation.ClearMin()
+	return uuo
+}
+
+// SetMax sets the "max" field.
+func (uuo *UserUpdateOne) SetMax(i int32) *UserUpdateOne {
+	uuo.mutation.ResetMax()
+	uuo.mutation.SetMax(i)
+	return uuo
+}
+
+// SetNillableMax sets the "max" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableMax(i *int32) *UserUpdateOne {
+	if i != nil {
+		uuo.SetMax(*i)
+	}
+	return uuo
+}
+
+// AddMax adds i to the "max" field.
+func (uuo *UserUpdateOne) AddMax(i int32) *UserUpdateOne {
+	uuo.mutation.AddMax(i)
+	return uuo
+}
+
+// ClearMax clears the value of the "max" field.
+func (uuo *UserUpdateOne) ClearMax() *UserUpdateOne {
+	uuo.mutation.ClearMax()
+	return uuo
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uuo *UserUpdateOne) SetCreatedAt(t time.Time) *UserUpdateOne {
 	uuo.mutation.SetCreatedAt(t)
@@ -397,9 +636,45 @@ func (uuo *UserUpdateOne) SetNillableUpdatedAt(t *time.Time) *UserUpdateOne {
 	return uuo
 }
 
+// AddAccountIDs adds the "accounts" edge to the Stripe entity by IDs.
+func (uuo *UserUpdateOne) AddAccountIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddAccountIDs(ids...)
+	return uuo
+}
+
+// AddAccounts adds the "accounts" edges to the Stripe entity.
+func (uuo *UserUpdateOne) AddAccounts(s ...*Stripe) *UserUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uuo.AddAccountIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearAccounts clears all "accounts" edges to the Stripe entity.
+func (uuo *UserUpdateOne) ClearAccounts() *UserUpdateOne {
+	uuo.mutation.ClearAccounts()
+	return uuo
+}
+
+// RemoveAccountIDs removes the "accounts" edge to Stripe entities by IDs.
+func (uuo *UserUpdateOne) RemoveAccountIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveAccountIDs(ids...)
+	return uuo
+}
+
+// RemoveAccounts removes "accounts" edges to Stripe entities.
+func (uuo *UserUpdateOne) RemoveAccounts(s ...*Stripe) *UserUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uuo.RemoveAccountIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -559,6 +834,46 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Column: user.FieldTwitterProfileImageURL,
 		})
 	}
+	if value, ok := uuo.mutation.Min(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Value:  value,
+			Column: user.FieldMin,
+		})
+	}
+	if value, ok := uuo.mutation.AddedMin(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Value:  value,
+			Column: user.FieldMin,
+		})
+	}
+	if uuo.mutation.MinCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Column: user.FieldMin,
+		})
+	}
+	if value, ok := uuo.mutation.Max(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Value:  value,
+			Column: user.FieldMax,
+		})
+	}
+	if value, ok := uuo.mutation.AddedMax(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Value:  value,
+			Column: user.FieldMax,
+		})
+	}
+	if uuo.mutation.MaxCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt32,
+			Column: user.FieldMax,
+		})
+	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -572,6 +887,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Value:  value,
 			Column: user.FieldUpdatedAt,
 		})
+	}
+	if uuo.mutation.AccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AccountsTable,
+			Columns: []string{user.AccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: stripe.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAccountsIDs(); len(nodes) > 0 && !uuo.mutation.AccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AccountsTable,
+			Columns: []string{user.AccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: stripe.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AccountsTable,
+			Columns: []string{user.AccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: stripe.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

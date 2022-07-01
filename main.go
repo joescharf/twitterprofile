@@ -49,19 +49,19 @@ func main() {
 
 	// **** INITIALIZE
 	app = &App{
-		SessionKey: os.Getenv("TP_SESSION_KEY"),
 		Env:        os.Getenv("TP_ENV"),
+		SessionKey: os.Getenv("TP_SESSION_KEY"),
+		DBURL:      os.Getenv("TP_DB_URL"),
 	}
-	app.Tp = &TP{
+	app.TwitterAPIConfig = &TwitterAPIConfig{
 		APIKey:       os.Getenv("TP_API_KEY"),
 		APISecret:    os.Getenv("TP_API_KEY_SECRET"),
 		AccessToken:  os.Getenv("TP_ACCESS_TOKEN"),
 		AccessSecret: os.Getenv("TP_ACCESS_TOKEN_SECRET"),
-		ClientID:     os.Getenv("TP_CLIENT_ID"),
 	}
 	app.Oauth1Config = &oauth1.Config{
-		ConsumerKey:    app.Tp.APIKey,
-		ConsumerSecret: app.Tp.APISecret,
+		ConsumerKey:    app.TwitterAPIConfig.APIKey,
+		ConsumerSecret: app.TwitterAPIConfig.APISecret,
 		CallbackURL:    "http://localhost:3000/auth/callback",
 		Endpoint:       gologinOauth1.AuthorizeEndpoint,
 	}
@@ -77,8 +77,7 @@ func main() {
 	defer logger.Sync() // flushes buffer, if any
 
 	// DB
-	dbConnStr := "postgres://postgres:postgres@localhost:15432/twitterprofile?sslmode=disable"
-	dbClient, err := ent.Open("postgres", dbConnStr)
+	dbClient, err := ent.Open("postgres", app.DBURL)
 	if err != nil {
 		app.Logger.Fatalf("failed opening connection to postgres: %v", err)
 	}
@@ -125,6 +124,11 @@ func main() {
 		r.Post("/profile", updateProfileHandler)
 	})
 
+	// API Routes
+	r.Group(func(r chi.Router) {
+		r.Use(APIAuthMiddleware)
+		r.Post("/api/v1/profile", updateAPIProfileHandler)
+	})
 	// START SERVERS and GOROUTINES
 	g := errgroup.Group{}
 	g.Go(func() error {

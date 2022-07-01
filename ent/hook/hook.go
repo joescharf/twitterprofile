@@ -9,6 +9,19 @@ import (
 	"github.com/joescharf/twitterprofile/v2/ent"
 )
 
+// The StripeFunc type is an adapter to allow the use of ordinary
+// function as Stripe mutator.
+type StripeFunc func(context.Context, *ent.StripeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StripeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.StripeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StripeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)

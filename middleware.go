@@ -78,3 +78,33 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+
+// APIAuthMiddleware - see https://go-chi.io/#/pages/middleware
+func APIAuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		// Get the Authentication header from the request
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			http.Error(w, "No Authorization header", http.StatusUnauthorized)
+			return
+		}
+		authToken := authHeader[len("Bearer "):]
+
+		// Get the user from the database
+		user, err := app.DB.User.Query().
+			Where(user.TokenSecretEQ(authToken)).
+			Only(ctx)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		// Set the request contexts:
+		// ctx := context.WithValue(r.Context(), "twitterInfo", twitterInfo)
+		ctx = context.WithValue(ctx, "user", user)
+
+		// call the next handler in the chain, passing the response writer and
+		// the updated request object with the new context value.
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}

@@ -24,7 +24,7 @@ func (a *App) AuthTwitter2(ctx context.Context) error {
 
 	// **** OAUTH2 PKCE
 	app.Oauth2Config = &oauth2.Config{
-		ClientID:    app.Tp.ClientID,
+		ClientID:    app.TwitterAPIConfig.ClientID,
 		Scopes:      []string{"tweet.read", "users.read"},
 		RedirectURL: "http://localhost:3000/auth/callback",
 		Endpoint: oauth2.Endpoint{
