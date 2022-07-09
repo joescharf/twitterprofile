@@ -461,10 +461,10 @@ type UserMutation struct {
 	token                     *string
 	token_secret              *string
 	twitter_profile_image_url *string
-	min                       *int32
-	addmin                    *int32
-	max                       *int32
-	addmax                    *int32
+	min                       *int64
+	addmin                    *int64
+	max                       *int64
+	addmax                    *int64
 	created_at                *time.Time
 	updated_at                *time.Time
 	clearedFields             map[string]struct{}
@@ -837,13 +837,13 @@ func (m *UserMutation) ResetTwitterProfileImageURL() {
 }
 
 // SetMin sets the "min" field.
-func (m *UserMutation) SetMin(i int32) {
+func (m *UserMutation) SetMin(i int64) {
 	m.min = &i
 	m.addmin = nil
 }
 
 // Min returns the value of the "min" field in the mutation.
-func (m *UserMutation) Min() (r int32, exists bool) {
+func (m *UserMutation) Min() (r int64, exists bool) {
 	v := m.min
 	if v == nil {
 		return
@@ -854,7 +854,7 @@ func (m *UserMutation) Min() (r int32, exists bool) {
 // OldMin returns the old "min" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldMin(ctx context.Context) (v int32, err error) {
+func (m *UserMutation) OldMin(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldMin is only allowed on UpdateOne operations")
 	}
@@ -869,7 +869,7 @@ func (m *UserMutation) OldMin(ctx context.Context) (v int32, err error) {
 }
 
 // AddMin adds i to the "min" field.
-func (m *UserMutation) AddMin(i int32) {
+func (m *UserMutation) AddMin(i int64) {
 	if m.addmin != nil {
 		*m.addmin += i
 	} else {
@@ -878,7 +878,7 @@ func (m *UserMutation) AddMin(i int32) {
 }
 
 // AddedMin returns the value that was added to the "min" field in this mutation.
-func (m *UserMutation) AddedMin() (r int32, exists bool) {
+func (m *UserMutation) AddedMin() (r int64, exists bool) {
 	v := m.addmin
 	if v == nil {
 		return
@@ -907,13 +907,13 @@ func (m *UserMutation) ResetMin() {
 }
 
 // SetMax sets the "max" field.
-func (m *UserMutation) SetMax(i int32) {
+func (m *UserMutation) SetMax(i int64) {
 	m.max = &i
 	m.addmax = nil
 }
 
 // Max returns the value of the "max" field in the mutation.
-func (m *UserMutation) Max() (r int32, exists bool) {
+func (m *UserMutation) Max() (r int64, exists bool) {
 	v := m.max
 	if v == nil {
 		return
@@ -924,7 +924,7 @@ func (m *UserMutation) Max() (r int32, exists bool) {
 // OldMax returns the old "max" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldMax(ctx context.Context) (v int32, err error) {
+func (m *UserMutation) OldMax(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldMax is only allowed on UpdateOne operations")
 	}
@@ -939,7 +939,7 @@ func (m *UserMutation) OldMax(ctx context.Context) (v int32, err error) {
 }
 
 // AddMax adds i to the "max" field.
-func (m *UserMutation) AddMax(i int32) {
+func (m *UserMutation) AddMax(i int64) {
 	if m.addmax != nil {
 		*m.addmax += i
 	} else {
@@ -948,7 +948,7 @@ func (m *UserMutation) AddMax(i int32) {
 }
 
 // AddedMax returns the value that was added to the "max" field in this mutation.
-func (m *UserMutation) AddedMax() (r int32, exists bool) {
+func (m *UserMutation) AddedMax() (r int64, exists bool) {
 	v := m.addmax
 	if v == nil {
 		return
@@ -1261,14 +1261,14 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		m.SetTwitterProfileImageURL(v)
 		return nil
 	case user.FieldMin:
-		v, ok := value.(int32)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMin(v)
 		return nil
 	case user.FieldMax:
-		v, ok := value.(int32)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1336,14 +1336,14 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 		m.AddTwitterUserID(v)
 		return nil
 	case user.FieldMin:
-		v, ok := value.(int32)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddMin(v)
 		return nil
 	case user.FieldMax:
-		v, ok := value.(int32)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

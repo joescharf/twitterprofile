@@ -9,6 +9,7 @@ require (
 	github.com/dghubble/gologin/v2 v2.3.0
 	github.com/dghubble/oauth1 v0.7.1
 	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-chi/render v1.0.1
 	github.com/gorilla/sessions v1.2.1
 	github.com/grokify/go-pkce v0.2.0
 	github.com/joho/godotenv v1.4.0

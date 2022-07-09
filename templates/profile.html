@@ -112,8 +112,8 @@
                     'Authorization': 'Bearer ' +  authToken,
                   },
                   body: JSON.stringify({
-                    min: this.min,
-                    max: this.max,
+                    min: Number(this.min),
+                    max: Number(this.max),
                   }),
                 }
               )

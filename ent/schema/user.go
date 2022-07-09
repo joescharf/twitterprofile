@@ -25,8 +25,8 @@ func (User) Fields() []ent.Field {
 		field.String("token"),
 		field.String("token_secret"),
 		field.String("twitter_profile_image_url").Optional(),
-		field.Int32("min").Optional(),
-		field.Int32("max").Optional(),
+		field.Int64("min").Optional(),
+		field.Int64("max").Optional(),
 		field.Time("created_at").
 			Default(time.Now),
 		field.Time("updated_at").

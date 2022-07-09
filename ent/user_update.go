@@ -101,14 +101,14 @@ func (uu *UserUpdate) ClearTwitterProfileImageURL() *UserUpdate {
 }
 
 // SetMin sets the "min" field.
-func (uu *UserUpdate) SetMin(i int32) *UserUpdate {
+func (uu *UserUpdate) SetMin(i int64) *UserUpdate {
 	uu.mutation.ResetMin()
 	uu.mutation.SetMin(i)
 	return uu
 }
 
 // SetNillableMin sets the "min" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableMin(i *int32) *UserUpdate {
+func (uu *UserUpdate) SetNillableMin(i *int64) *UserUpdate {
 	if i != nil {
 		uu.SetMin(*i)
 	}
@@ -116,7 +116,7 @@ func (uu *UserUpdate) SetNillableMin(i *int32) *UserUpdate {
 }
 
 // AddMin adds i to the "min" field.
-func (uu *UserUpdate) AddMin(i int32) *UserUpdate {
+func (uu *UserUpdate) AddMin(i int64) *UserUpdate {
 	uu.mutation.AddMin(i)
 	return uu
 }
@@ -128,14 +128,14 @@ func (uu *UserUpdate) ClearMin() *UserUpdate {
 }
 
 // SetMax sets the "max" field.
-func (uu *UserUpdate) SetMax(i int32) *UserUpdate {
+func (uu *UserUpdate) SetMax(i int64) *UserUpdate {
 	uu.mutation.ResetMax()
 	uu.mutation.SetMax(i)
 	return uu
 }
 
 // SetNillableMax sets the "max" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableMax(i *int32) *UserUpdate {
+func (uu *UserUpdate) SetNillableMax(i *int64) *UserUpdate {
 	if i != nil {
 		uu.SetMax(*i)
 	}
@@ -143,7 +143,7 @@ func (uu *UserUpdate) SetNillableMax(i *int32) *UserUpdate {
 }
 
 // AddMax adds i to the "max" field.
-func (uu *UserUpdate) AddMax(i int32) *UserUpdate {
+func (uu *UserUpdate) AddMax(i int64) *UserUpdate {
 	uu.mutation.AddMax(i)
 	return uu
 }
@@ -358,41 +358,41 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Min(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: user.FieldMin,
 		})
 	}
 	if value, ok := uu.mutation.AddedMin(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: user.FieldMin,
 		})
 	}
 	if uu.mutation.MinCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Column: user.FieldMin,
 		})
 	}
 	if value, ok := uu.mutation.Max(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: user.FieldMax,
 		})
 	}
 	if value, ok := uu.mutation.AddedMax(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: user.FieldMax,
 		})
 	}
 	if uu.mutation.MaxCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Column: user.FieldMax,
 		})
 	}
@@ -555,14 +555,14 @@ func (uuo *UserUpdateOne) ClearTwitterProfileImageURL() *UserUpdateOne {
 }
 
 // SetMin sets the "min" field.
-func (uuo *UserUpdateOne) SetMin(i int32) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetMin(i int64) *UserUpdateOne {
 	uuo.mutation.ResetMin()
 	uuo.mutation.SetMin(i)
 	return uuo
 }
 
 // SetNillableMin sets the "min" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableMin(i *int32) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetNillableMin(i *int64) *UserUpdateOne {
 	if i != nil {
 		uuo.SetMin(*i)
 	}
@@ -570,7 +570,7 @@ func (uuo *UserUpdateOne) SetNillableMin(i *int32) *UserUpdateOne {
 }
 
 // AddMin adds i to the "min" field.
-func (uuo *UserUpdateOne) AddMin(i int32) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddMin(i int64) *UserUpdateOne {
 	uuo.mutation.AddMin(i)
 	return uuo
 }
@@ -582,14 +582,14 @@ func (uuo *UserUpdateOne) ClearMin() *UserUpdateOne {
 }
 
 // SetMax sets the "max" field.
-func (uuo *UserUpdateOne) SetMax(i int32) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetMax(i int64) *UserUpdateOne {
 	uuo.mutation.ResetMax()
 	uuo.mutation.SetMax(i)
 	return uuo
 }
 
 // SetNillableMax sets the "max" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableMax(i *int32) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetNillableMax(i *int64) *UserUpdateOne {
 	if i != nil {
 		uuo.SetMax(*i)
 	}
@@ -597,7 +597,7 @@ func (uuo *UserUpdateOne) SetNillableMax(i *int32) *UserUpdateOne {
 }
 
 // AddMax adds i to the "max" field.
-func (uuo *UserUpdateOne) AddMax(i int32) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddMax(i int64) *UserUpdateOne {
 	uuo.mutation.AddMax(i)
 	return uuo
 }
@@ -836,41 +836,41 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Min(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: user.FieldMin,
 		})
 	}
 	if value, ok := uuo.mutation.AddedMin(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: user.FieldMin,
 		})
 	}
 	if uuo.mutation.MinCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Column: user.FieldMin,
 		})
 	}
 	if value, ok := uuo.mutation.Max(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: user.FieldMax,
 		})
 	}
 	if value, ok := uuo.mutation.AddedMax(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: user.FieldMax,
 		})
 	}
 	if uuo.mutation.MaxCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Column: user.FieldMax,
 		})
 	}

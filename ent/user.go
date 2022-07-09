@@ -29,9 +29,9 @@ type User struct {
 	// TwitterProfileImageURL holds the value of the "twitter_profile_image_url" field.
 	TwitterProfileImageURL string `json:"twitter_profile_image_url,omitempty"`
 	// Min holds the value of the "min" field.
-	Min int32 `json:"min,omitempty"`
+	Min int64 `json:"min,omitempty"`
 	// Max holds the value of the "max" field.
-	Max int32 `json:"max,omitempty"`
+	Max int64 `json:"max,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -131,13 +131,13 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field min", values[i])
 			} else if value.Valid {
-				u.Min = int32(value.Int64)
+				u.Min = value.Int64
 			}
 		case user.FieldMax:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field max", values[i])
 			} else if value.Valid {
-				u.Max = int32(value.Int64)
+				u.Max = value.Int64
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {

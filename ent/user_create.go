@@ -76,13 +76,13 @@ func (uc *UserCreate) SetNillableTwitterProfileImageURL(s *string) *UserCreate {
 }
 
 // SetMin sets the "min" field.
-func (uc *UserCreate) SetMin(i int32) *UserCreate {
+func (uc *UserCreate) SetMin(i int64) *UserCreate {
 	uc.mutation.SetMin(i)
 	return uc
 }
 
 // SetNillableMin sets the "min" field if the given value is not nil.
-func (uc *UserCreate) SetNillableMin(i *int32) *UserCreate {
+func (uc *UserCreate) SetNillableMin(i *int64) *UserCreate {
 	if i != nil {
 		uc.SetMin(*i)
 	}
@@ -90,13 +90,13 @@ func (uc *UserCreate) SetNillableMin(i *int32) *UserCreate {
 }
 
 // SetMax sets the "max" field.
-func (uc *UserCreate) SetMax(i int32) *UserCreate {
+func (uc *UserCreate) SetMax(i int64) *UserCreate {
 	uc.mutation.SetMax(i)
 	return uc
 }
 
 // SetNillableMax sets the "max" field if the given value is not nil.
-func (uc *UserCreate) SetNillableMax(i *int32) *UserCreate {
+func (uc *UserCreate) SetNillableMax(i *int64) *UserCreate {
 	if i != nil {
 		uc.SetMax(*i)
 	}
@@ -325,7 +325,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := uc.mutation.Min(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: user.FieldMin,
 		})
@@ -333,7 +333,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := uc.mutation.Max(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: user.FieldMax,
 		})
@@ -519,7 +519,7 @@ func (u *UserUpsert) ClearTwitterProfileImageURL() *UserUpsert {
 }
 
 // SetMin sets the "min" field.
-func (u *UserUpsert) SetMin(v int32) *UserUpsert {
+func (u *UserUpsert) SetMin(v int64) *UserUpsert {
 	u.Set(user.FieldMin, v)
 	return u
 }
@@ -531,7 +531,7 @@ func (u *UserUpsert) UpdateMin() *UserUpsert {
 }
 
 // AddMin adds v to the "min" field.
-func (u *UserUpsert) AddMin(v int32) *UserUpsert {
+func (u *UserUpsert) AddMin(v int64) *UserUpsert {
 	u.Add(user.FieldMin, v)
 	return u
 }
@@ -543,7 +543,7 @@ func (u *UserUpsert) ClearMin() *UserUpsert {
 }
 
 // SetMax sets the "max" field.
-func (u *UserUpsert) SetMax(v int32) *UserUpsert {
+func (u *UserUpsert) SetMax(v int64) *UserUpsert {
 	u.Set(user.FieldMax, v)
 	return u
 }
@@ -555,7 +555,7 @@ func (u *UserUpsert) UpdateMax() *UserUpsert {
 }
 
 // AddMax adds v to the "max" field.
-func (u *UserUpsert) AddMax(v int32) *UserUpsert {
+func (u *UserUpsert) AddMax(v int64) *UserUpsert {
 	u.Add(user.FieldMax, v)
 	return u
 }
@@ -738,14 +738,14 @@ func (u *UserUpsertOne) ClearTwitterProfileImageURL() *UserUpsertOne {
 }
 
 // SetMin sets the "min" field.
-func (u *UserUpsertOne) SetMin(v int32) *UserUpsertOne {
+func (u *UserUpsertOne) SetMin(v int64) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.SetMin(v)
 	})
 }
 
 // AddMin adds v to the "min" field.
-func (u *UserUpsertOne) AddMin(v int32) *UserUpsertOne {
+func (u *UserUpsertOne) AddMin(v int64) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.AddMin(v)
 	})
@@ -766,14 +766,14 @@ func (u *UserUpsertOne) ClearMin() *UserUpsertOne {
 }
 
 // SetMax sets the "max" field.
-func (u *UserUpsertOne) SetMax(v int32) *UserUpsertOne {
+func (u *UserUpsertOne) SetMax(v int64) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.SetMax(v)
 	})
 }
 
 // AddMax adds v to the "max" field.
-func (u *UserUpsertOne) AddMax(v int32) *UserUpsertOne {
+func (u *UserUpsertOne) AddMax(v int64) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.AddMax(v)
 	})
@@ -1131,14 +1131,14 @@ func (u *UserUpsertBulk) ClearTwitterProfileImageURL() *UserUpsertBulk {
 }
 
 // SetMin sets the "min" field.
-func (u *UserUpsertBulk) SetMin(v int32) *UserUpsertBulk {
+func (u *UserUpsertBulk) SetMin(v int64) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.SetMin(v)
 	})
 }
 
 // AddMin adds v to the "min" field.
-func (u *UserUpsertBulk) AddMin(v int32) *UserUpsertBulk {
+func (u *UserUpsertBulk) AddMin(v int64) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.AddMin(v)
 	})
@@ -1159,14 +1159,14 @@ func (u *UserUpsertBulk) ClearMin() *UserUpsertBulk {
 }
 
 // SetMax sets the "max" field.
-func (u *UserUpsertBulk) SetMax(v int32) *UserUpsertBulk {
+func (u *UserUpsertBulk) SetMax(v int64) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.SetMax(v)
 	})
 }
 
 // AddMax adds v to the "max" field.
-func (u *UserUpsertBulk) AddMax(v int32) *UserUpsertBulk {
+func (u *UserUpsertBulk) AddMax(v int64) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.AddMax(v)
 	})

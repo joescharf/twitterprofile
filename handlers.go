@@ -16,6 +16,7 @@ import (
 	"github.com/joescharf/twitterprofile/v2/templates"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/render"
 )
 
 func FlashError(w http.ResponseWriter, r *http.Request, session *sessions.Session, title, message, uri string, status int) {
@@ -161,16 +162,32 @@ func updateProfileHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(fmt.Sprintf("Profile Updated Successfully")))
 }
 
+type ProfileRequest struct {
+	*ent.User
+}
+
+func (p *ProfileRequest) Bind(r *http.Request) error {
+	return nil
+}
+
 // updateAPIProfileHandler updates the twitter profile
 func updateAPIProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// Get user from context
 	user := r.Context().Value("user").(*ent.User)
 
-	// Get min and max from body
-	min := r.Context().Value("min")
-	max := r.Context().Value("max")
+	// Get data from request:
+	data := &ProfileRequest{User: user}
+	if err := render.Bind(r, data); err != nil {
+		w.WriteHeader(422)
+		w.Write([]byte(fmt.Sprintf("API error updating profile: %v", err)))
+		return
+	}
 
-	w.Write([]byte(fmt.Sprintf("User ID: %d, Min: %s, Max: %s", user.ID, min, max)))
+	// Set min and max
+	user.Min = data.Min
+	user.Max = data.Max
+
+	w.Write([]byte(fmt.Sprintf("User ID: %d, Min: %d, Max: %d", user.ID, user.Min, user.Max)))
 }
 
 // FileServer conveniently sets up a http.FileServer handler to serve

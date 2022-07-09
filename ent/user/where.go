@@ -136,14 +136,14 @@ func TwitterProfileImageURL(v string) predicate.User {
 }
 
 // Min applies equality check predicate on the "min" field. It's identical to MinEQ.
-func Min(v int32) predicate.User {
+func Min(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldMin), v))
 	})
 }
 
 // Max applies equality check predicate on the "max" field. It's identical to MaxEQ.
-func Max(v int32) predicate.User {
+func Max(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldMax), v))
 	})
@@ -823,21 +823,21 @@ func TwitterProfileImageURLContainsFold(v string) predicate.User {
 }
 
 // MinEQ applies the EQ predicate on the "min" field.
-func MinEQ(v int32) predicate.User {
+func MinEQ(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldMin), v))
 	})
 }
 
 // MinNEQ applies the NEQ predicate on the "min" field.
-func MinNEQ(v int32) predicate.User {
+func MinNEQ(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldMin), v))
 	})
 }
 
 // MinIn applies the In predicate on the "min" field.
-func MinIn(vs ...int32) predicate.User {
+func MinIn(vs ...int64) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -854,7 +854,7 @@ func MinIn(vs ...int32) predicate.User {
 }
 
 // MinNotIn applies the NotIn predicate on the "min" field.
-func MinNotIn(vs ...int32) predicate.User {
+func MinNotIn(vs ...int64) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -871,28 +871,28 @@ func MinNotIn(vs ...int32) predicate.User {
 }
 
 // MinGT applies the GT predicate on the "min" field.
-func MinGT(v int32) predicate.User {
+func MinGT(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldMin), v))
 	})
 }
 
 // MinGTE applies the GTE predicate on the "min" field.
-func MinGTE(v int32) predicate.User {
+func MinGTE(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldMin), v))
 	})
 }
 
 // MinLT applies the LT predicate on the "min" field.
-func MinLT(v int32) predicate.User {
+func MinLT(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldMin), v))
 	})
 }
 
 // MinLTE applies the LTE predicate on the "min" field.
-func MinLTE(v int32) predicate.User {
+func MinLTE(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldMin), v))
 	})
@@ -913,21 +913,21 @@ func MinNotNil() predicate.User {
 }
 
 // MaxEQ applies the EQ predicate on the "max" field.
-func MaxEQ(v int32) predicate.User {
+func MaxEQ(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldMax), v))
 	})
 }
 
 // MaxNEQ applies the NEQ predicate on the "max" field.
-func MaxNEQ(v int32) predicate.User {
+func MaxNEQ(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldMax), v))
 	})
 }
 
 // MaxIn applies the In predicate on the "max" field.
-func MaxIn(vs ...int32) predicate.User {
+func MaxIn(vs ...int64) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -944,7 +944,7 @@ func MaxIn(vs ...int32) predicate.User {
 }
 
 // MaxNotIn applies the NotIn predicate on the "max" field.
-func MaxNotIn(vs ...int32) predicate.User {
+func MaxNotIn(vs ...int64) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -961,28 +961,28 @@ func MaxNotIn(vs ...int32) predicate.User {
 }
 
 // MaxGT applies the GT predicate on the "max" field.
-func MaxGT(v int32) predicate.User {
+func MaxGT(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldMax), v))
 	})
 }
 
 // MaxGTE applies the GTE predicate on the "max" field.
-func MaxGTE(v int32) predicate.User {
+func MaxGTE(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldMax), v))
 	})
 }
 
 // MaxLT applies the LT predicate on the "max" field.
-func MaxLT(v int32) predicate.User {
+func MaxLT(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldMax), v))
 	})
 }
 
 // MaxLTE applies the LTE predicate on the "max" field.
-func MaxLTE(v int32) predicate.User {
+func MaxLTE(v int64) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldMax), v))
 	})

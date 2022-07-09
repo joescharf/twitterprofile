@@ -53,8 +53,8 @@ type ProfileParams struct {
 	UserInfo       UserInfo
 	ScreenName     string
 	Description    string
-	Min            int32
-	Max            int32
+	Min            int64
+	Max            int64
 	StripeAccounts []*StripeAccount
 }
 
